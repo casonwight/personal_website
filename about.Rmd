@@ -1,0 +1,5 @@
+---
+title: "About Me"
+---
+
+I am a Master's Student, studying statistics at BYU. 

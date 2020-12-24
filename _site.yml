@@ -1,0 +1,11 @@
+name: "personal-website"
+output_dir: "."
+navbar:
+  title: "Cason Wight"
+  left:
+    - text: "Home"
+      href: index.html
+    - text: "Porjects"
+      href: projects.html
+    - text: "About Me"
+      href: about.html
