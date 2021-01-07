@@ -1,5 +1,80 @@
----
-title: "Personal Website"
----
+<center>
+![](stock_photo.png){width=100%}
+</center>
 
-Hello, World!
+##### Personal statement goes here  
+
+***
+
+###  Experience  
+
+<p></p>
+  
+#####  **Xandr** (Warner Media Company)  
+
+:::: {.columns}
+::: {.column width="80%"}
+**Data Science Intern**  
+*Portland, OR*  
+•  Constructed an algorithm that estimates theoretical optimal price floors in advertisement auctions  
+•  Used algorithm to run a weeklong experiment on bidder reactions to price floors (14 mil. impressions)  
+•  Wrote a statistical analysis that was presented to the data science team, executives, and clients  
+•  Analysis will continue to be used for next steps in research, potentially leading to 5% revenue gains  
+:::
+::: {.column width="20%"}
+<div align="right">Summer 2020</div>
+:::
+::::
+  
+<p></p>
+  
+#####  **BYU Statistics Department**  
+
+:::: {.columns}
+::: {.column width="80%"}
+**Research Assistant**  
+*Provo, UT*  
+:::
+::: {.column width="20%"}
+<div align="right">Fall 2017 to Present</div>
+:::
+::::
+  
+<p></p>
+  
+#####  **Cigna**  
+:::: {.columns}
+::: {.column width="80%"}
+**Data Analyst Intern**  
+*Hartford, CT*  
+•  Created a batch rating tool that priced hundreds of health plans simultaneously, using the prior rating engine  
+•  Produced a pricing study on the vision product using batch rating tool  
+•  Presented suggestions that could lead to an estimated 5% profit increase (used in pricing update)  
+:::
+::: {.column width="20%"}
+<div align="right">Summer 2019</div>
+:::
+::::
+  
+<p></p>
+  
+#####  **Oliver Wyman**  
+:::: {.columns}
+::: {.column width="80%"}
+**Data Analyst Intern**  
+*Atlanta, GA*  
+•  Led a risk analysis study from client data to final reports, presented to the client as a formal document  
+•  Evaluated dozens of risk studies for correctness and completeness, often leading to material changes
+:::
+::: {.column width="20%"}
+<div align="right">Summer 2018</div>
+:::
+::::
+  
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  
+<p style="text-align: center;">
+    <a href="mailto:cason.wight@gmail.com?subject = Feedback&body = Message" class="fa fa-send fa-lg fa-fw"></a>
+    <a href="https://www.linkedin.com/in/casonwight/" class="fa fa-linkedin fa-lg fa-fw"></a>
+    <a href="https://github.com/casonwight" class="fa fa-github fa-lg fa-fw"></a>
+</p>

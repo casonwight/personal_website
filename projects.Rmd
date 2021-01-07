@@ -1,3 +1,13 @@
 ---
-title: "Projects"
+title: "Project Portfolio"
 ---
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  
+<p style="text-align: center;">
+    <a href="mailto:cason.wight@gmail.com?subject = Feedback&body = Message" class="fa fa-send fa-lg fa-fw"></a>
+    <a href="https://www.linkedin.com/in/casonwight/" class="fa fa-linkedin fa-lg fa-fw"></a>
+    <a href="https://github.com/casonwight" class="fa fa-github fa-lg fa-fw"></a>
+</p>

@@ -5,7 +5,12 @@ navbar:
   left:
     - text: "Home"
       href: index.html
-    - text: "Porjects"
-      href: projects.html
     - text: "About Me"
       href: about.html
+    - text: "Research"
+      href: research.html
+    - text: "Portfolio"
+      href: projects.html
+output:
+  html_document:
+    theme: united
