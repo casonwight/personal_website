@@ -7,9 +7,12 @@ title: "About Me"
 <br>
 ![](photo_circle.jpg){width=85%}
 
+
+
 :::
 ::: {.column width="70%"}
 
+### Cason Wight  
 Cason Wight is a data scientist, finishing a Master's in Statistics from BYU. He loves skiing, white-water rafting, tennis, and referring to himself in the third person. He grew up in Oregon and has always felt a pull to the Pacific Northwest.
 
 He is passionate about data visualization and is interested in the trade-off between the accuracy of machine learning and the inference of statistical modeling. He is skilled in `R`, `python`, and several statistical methods. He is currently studying deep learning methodology, app development, and big data tools. 
@@ -36,3 +39,4 @@ He is passionate about data visualization and is interested in the trade-off bet
     <a href="https://github.com/casonwight" class="fa fa-github fa-lg fa-fw"></a>
 </p>
 <a href="Resume 2020.pdf" download><p style="text-align:center">Download my Resume</p></a>
+<p style="text-align:center; font-size:75%; color:grey">Made by Cason Wight</p>

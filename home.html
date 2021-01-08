@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>home.utf8</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+<link rel="stylesheet" href="united.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Cason Wight</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="home.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About Me</a>
+</li>
+<li>
+  <a href="research.html">Research</a>
+</li>
+<li>
+  <a href="projects.html">Portfolio</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+
+</div>
+
+
+<img src="stock_photo.png" />
+<h4>
+I am a data scientist looking to balance machine learning and statistical theory to deliver interpretable solutions. I am seeking positions that match research to application.
+</h4>
+<hr />
+<div id="experience" class="section level3">
+<h3>Experience</h3>
+<div id="xandr-warner-media-company" class="section level5">
+<h5><strong>Xandr</strong> (Warner Media Company)</h5>
+<div class="columns">
+<div class="column" style="width:80%;">
+<p><strong>Data Science Intern</strong><br />
+<em>Portland, OR</em><br />
+• Constructed an algorithm that estimates theoretical optimal price floors in advertisement auctions<br />
+• Used algorithm to run a weeklong experiment on bidder reactions to price floors (14 mil. impressions)<br />
+• Wrote a statistical analysis that was presented to the data science team, executives, and clients<br />
+• Analysis will continue to be used for next steps in research, potentially leading to 5% revenue gains</p>
+</div><div class="column" style="width:20%;">
+<div align="right">
+Summer 2020
+</div>
+</div>
+</div>
+<p>
+</p>
+</div>
+<div id="byu-statistics-department" class="section level5">
+<h5><strong>BYU Statistics Department</strong></h5>
+<div class="columns">
+<div class="column" style="width:80%;">
+<p><strong>Research Assistant</strong><br />
+<em>Provo, UT</em></p>
+</div><div class="column" style="width:20%;">
+<div align="right">
+Fall 2017 to Present
+</div>
+</div>
+</div>
+<div class="columns">
+<div class="column" style="width:80%;">
+<p><strong>Teaching Assistant—Mixed Models</strong><br />
+<em>Provo, UT</em></p>
+</div><div class="column" style="width:20%;">
+<div align="right">
+Winter 2019
+</div>
+</div>
+</div>
+<p>
+</p>
+</div>
+<div id="cigna" class="section level5">
+<h5><strong>Cigna</strong></h5>
+<div class="columns">
+<div class="column" style="width:80%;">
+<p><strong>Data Analyst Intern</strong><br />
+<em>Hartford, CT</em><br />
+• Created a batch rating tool that priced hundreds of health plans simultaneously, using the prior rating engine<br />
+• Produced a pricing study on the vision product using batch rating tool<br />
+• Presented suggestions that could lead to an estimated 5% profit increase (used in pricing update)</p>
+</div><div class="column" style="width:20%;">
+<div align="right">
+Summer 2019
+</div>
+</div>
+</div>
+<p>
+</p>
+</div>
+<div id="oliver-wyman" class="section level5">
+<h5><strong>Oliver Wyman</strong></h5>
+<div class="columns">
+<div class="column" style="width:80%;">
+<p><strong>Data Analyst Intern</strong><br />
+<em>Atlanta, GA</em><br />
+• Led a risk analysis study from client data to final reports, presented to the client as a formal document<br />
+• Evaluated dozens of risk studies for correctness and completeness, often leading to material changes</p>
+</div><div class="column" style="width:20%;">
+<div align="right">
+Summer 2018
+</div>
+</div>
+</div>
+<hr />
+</div>
+</div>
+<div id="technical-skills" class="section level3">
+<h3>Technical Skills</h3>
+<div class="columns">
+<div class="column" style="width:33.33%;">
+<h4 id="languages">Languages</h4>
+<div class="columns">
+<div class="column" style="width:25%;">
+<p class="fa fa-fw fa-lg" style="font-size:Large; text-align:left">
+R
+</p>
+<br>
+<p class="fa fa-fw fa-lg" style="font-size:Large; text-align:left">
+Python
+</p>
+<br>
+<p class="fa fa-fw fa-lg" style="font-size:Large; text-align:left">
+SQL
+</p>
+<br>
+<p class="fa fa-fw fa-lg" style="font-size:Large; text-align:left">
+VBA
+</p>
+<br>
+<p class="fa fa-fw fa-lg" style="font-size:Large; text-align:left">
+C++
+</p>
+<p><br></p>
+</div><div class="column" style="width:50%;">
+<p class="fa fa-star fa-lg">
+</p>
+<p class="fa fa-star fa-lg">
+</p>
+<p class="fa fa-star fa-lg">
+</p>
+<p class="fa fa-star fa-lg">
+</p>
+<p class="fa fa-star-half-empty fa-lg">
+</p>
+<br>
+<p class="fa fa-star fa-lg">
+</p>
+<p class="fa fa-star fa-lg">
+</p>
+<p class="fa fa-star fa-lg">
+</p>
+<p class="fa fa-star-half-empty fa-lg">
+</p>
+<p class="fa fa-star-o fa-lg">
+</p>
+<br>
+<p class="fa fa-star fa-lg">
+</p>
+<p class="fa fa-star fa-lg">
+</p>
+<p class="fa fa-star fa-lg">
+</p>
+<p class="fa fa-star-o fa-lg">
+</p>
+<p class="fa fa-star-o fa-lg">
+</p>
+<br>
+<p class="fa fa-star fa-lg">
+</p>
+<p class="fa fa-star fa-lg">
+</p>
+<p class="fa fa-star fa-lg">
+</p>
+<p class="fa fa-star-o fa-lg">
+</p>
+<p class="fa fa-star-o fa-lg">
+</p>
+<br>
+<p class="fa fa-star fa-lg">
+</p>
+<p class="fa fa-star fa-lg">
+</p>
+<p class="fa fa-star-o fa-lg">
+</p>
+<p class="fa fa-star-o fa-lg">
+</p>
+<p class="fa fa-star-o fa-lg">
+</p>
+</div>
+</div>
+</div><div class="column" style="width:33.33%;">
+<h4 id="data-analysis-tools">Data Analysis Tools</h4>
+<div class="columns">
+<div class="column" style="width:35%;">
+<p class="fa fa-fw fa-lg" style="font-size:Large; text-align:left">
+Tidyverse
+</p>
+<br>
+<p class="fa fa-fw fa-lg" style="font-size:Large; text-align:left">
+ggplot
+</p>
+<br>
+<p class="fa fa-fw fa-lg" style="font-size:Large; text-align:left">
+pandas
+</p>
+<br>
+<p class="fa fa-fw fa-lg" style="font-size:Large; text-align:left">
+sklearn
+</p>
+<br>
+<p class="fa fa-fw fa-lg" style="font-size:Large; text-align:left">
+Stan
+</p>
+<p><br></p>
+</div><div class="column" style="width:50%;">
+<p class="fa fa-star fa-lg">
+</p>
+<p class="fa fa-star fa-lg">
+</p>
+<p class="fa fa-star fa-lg">
+</p>
+<p class="fa fa-star fa-lg">
+</p>
+<p class="fa fa-star-half-empty fa-lg">
+</p>
+<br>
+<p class="fa fa-star fa-lg">
+</p>
+<p class="fa fa-star fa-lg">
+</p>
+<p class="fa fa-star fa-lg">
+</p>
+<p class="fa fa-star fa-lg">
+</p>
+<p class="fa fa-star-half-empty fa-lg">
+</p>
+<br>
+<p class="fa fa-star fa-lg">
+</p>
+<p class="fa fa-star fa-lg">
+</p>
+<p class="fa fa-star fa-lg">
+</p>
+<p class="fa fa-star fa-lg">
+</p>
+<p class="fa fa-star-o fa-lg">
+</p>
+<br>
+<p class="fa fa-star fa-lg">
+</p>
+<p class="fa fa-star fa-lg">
+</p>
+<p class="fa fa-star fa-lg">
+</p>
+<p class="fa fa-star-half-empty fa-lg">
+</p>
+<p class="fa fa-star-o fa-lg">
+</p>
+<br>
+<p class="fa fa-star fa-lg">
+</p>
+<p class="fa fa-star fa-lg">
+</p>
+<p class="fa fa-star fa-lg">
+</p>
+<p class="fa fa-star-o fa-lg">
+</p>
+<p class="fa fa-star-o fa-lg">
+</p>
+</div>
+</div>
+</div><div class="column" style="width:33.33%;">
+<h4 id="statistical-analysis">Statistical Analysis</h4>
+<div class="columns">
+<div class="column" style="width:40%;">
+<p class="fa fa-fw fa-lg" style="font-size:Large; text-align:left">
+Regression
+</p>
+<br>
+<p class="fa fa-fw fa-lg" style="font-size:Large; text-align:left">
+Bayesian
+</p>
+<br>
+<p class="fa fa-fw fa-lg" style="font-size:Large; text-align:left">
+Multivariate
+</p>
+<br>
+<p class="fa fa-fw fa-lg" style="font-size:Large; text-align:left">
+NLP
+</p>
+<br>
+<p class="fa fa-fw fa-lg" style="font-size:Large; text-align:left">
+Unsupervised
+</p>
+<p><br></p>
+</div><div class="column" style="width:50%;">
+<p class="fa fa-star fa-lg">
+</p>
+<p class="fa fa-star fa-lg">
+</p>
+<p class="fa fa-star fa-lg">
+</p>
+<p class="fa fa-star fa-lg">
+</p>
+<p class="fa fa-star-half-empty fa-lg">
+</p>
+<br>
+<p class="fa fa-star fa-lg">
+</p>
+<p class="fa fa-star fa-lg">
+</p>
+<p class="fa fa-star fa-lg">
+</p>
+<p class="fa fa-star fa-lg">
+</p>
+<p class="fa fa-star-o fa-lg">
+</p>
+<br>
+<p class="fa fa-star fa-lg">
+</p>
+<p class="fa fa-star fa-lg">
+</p>
+<p class="fa fa-star fa-lg">
+</p>
+<p class="fa fa-star-half-empty fa-lg">
+</p>
+<p class="fa fa-star-o fa-lg">
+</p>
+<br>
+<p class="fa fa-star fa-lg">
+</p>
+<p class="fa fa-star fa-lg">
+</p>
+<p class="fa fa-star fa-lg">
+</p>
+<p class="fa fa-star-o fa-lg">
+</p>
+<p class="fa fa-star-o fa-lg">
+</p>
+<br>
+<p class="fa fa-star fa-lg">
+</p>
+<p class="fa fa-star fa-lg">
+</p>
+<p class="fa fa-star fa-lg">
+</p>
+<p class="fa fa-star-o fa-lg">
+</p>
+<p class="fa fa-star-o fa-lg">
+</p>
+</div>
+</div>
+</div>
+</div>
+<div id="machine-learning" class="section level4">
+<h4>Machine Learning</h4>
+<p>Classification/Regression Trees, Deep learning, Support Vector Machines, Naive Bayes, K-nearest neighbors, Linear/Quadratic Discriminant Analysis, K-Means, Agglomerative Clustering, Regularization, Principal Component Analysis, Random Forests, Kernel Density Estimation, and SARIMA</p>
+</div>
+<div id="other-tools" class="section level4">
+<h4>Other Tools</h4>
+<p>Exposure to Hadoop, Databricks, and h2o</p>
+<hr />
+</div>
+</div>
+<div id="education" class="section level3">
+<h3>Education</h3>
+<div id="brigham-young-university-byu" class="section level5">
+<h5><strong>Brigham Young University</strong> (BYU)</h5>
+<p style="margin-top: -10px">
+<em>Provo, UT</em>
+</p>
+<p><strong>Master’s in Statistics</strong><br />
+2019 to 2021<br />
+3.93 GPA</p>
+<p><strong>Bachelor’s in Statistics (emphasis in Actuarial Science)</strong><br />
+2016 to 2021<br />
+4.00 GPA</p>
+<hr />
+</div>
+</div>
+<div id="awards-and-achievements" class="section level3">
+<h3>Awards and Achievements</h3>
+<div id="competitions-won" class="section level5">
+<h5>Competitions won</h5>
+<ul style="margin-top: -10px">
+<li>
+Domo Data Analytics Case Competition, BYU 2020
+</li>
+<li>
+BYU Student Research Conference, BYU 2020 and 2018
+</li>
+<li>
+CAS Data Visualization Case Competition, ASU 2019
+</li>
+</ul>
+</div>
+<div id="scholarships" class="section level5">
+<h5>Scholarships</h5>
+<ul style="margin-top: -10px">
+<li>
+BYU Undergraduate Full Academic Scholarship
+</li>
+<li>
+CAS Trust Scholarship
+</li>
+<li>
+Intel’s Andy Grove Scholarship
+</li>
+<li>
+BYU Statistics Department Graduate Full Academic Scholarship
+</li>
+</ul>
+</div>
+<div id="other" class="section level5">
+<h5>Other</h5>
+<ul style="margin-top: -10px">
+<li>
+Fluent in Spanish
+</li>
+<li>
+Statistics Department Dean’s List, 2016 to present
+</li>
+<li>
+Eagle Scout
+</li>
+</ul>
+<p><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"></p>
+<p style="text-align: center;">
+<a href="mailto:cason.wight@gmail.com?subject = Feedback&body = Message" class="fa fa-send fa-lg fa-fw"></a> <a href="https://www.linkedin.com/in/casonwight/" class="fa fa-linkedin fa-lg fa-fw"></a> <a href="https://github.com/casonwight" class="fa fa-github fa-lg fa-fw"></a>
+</p>
+<a href="Resume 2020.pdf" download>
+<p style="text-align:center">
+Download my Resume
+</p>
+<p></a></p>
+<p style="text-align:center; font-size:75%; color:grey">
+Made by Cason Wight
+</p>
+</div>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,278 @@
+---
+layout: default
+---
+
+![](stock_photo.png){width=100%,margin=0,padding=0}
+<h4>I am a data scientist looking to balance machine learning and statistical theory to deliver interpretable solutions. I am seeking positions that match research to application.</h4>
+
+***
+
+###  Experience  
+  
+#####  **Xandr** (Warner Media Company)
+:::: {.columns}
+::: {.column width="80%"}
+**Data Science Intern**  
+*Portland, OR*  
+•  Constructed an algorithm that estimates theoretical optimal price floors in advertisement auctions  
+•  Used algorithm to run a weeklong experiment on bidder reactions to price floors (14 mil. impressions)  
+•  Wrote a statistical analysis that was presented to the data science team, executives, and clients  
+•  Analysis will continue to be used for next steps in research, potentially leading to 5% revenue gains  
+:::
+::: {.column width="20%"}
+<div align="right">Summer 2020</div>
+:::
+::::
+  
+<p></p>
+  
+#####  **BYU Statistics Department**  
+
+:::: {.columns}
+::: {.column width="80%"}
+**Research Assistant**  
+*Provo, UT*  
+:::
+::: {.column width="20%"}
+<div align="right">Fall 2017 to Present</div>
+:::
+::::
+:::: {.columns}
+::: {.column width="80%"}
+**Teaching Assistant---Mixed Models**  
+*Provo, UT*  
+:::
+::: {.column width="20%"}
+<div align="right">Winter 2019</div>
+:::
+::::
+  
+<p></p>
+  
+#####  **Cigna**  
+:::: {.columns}
+::: {.column width="80%"}
+**Data Analyst Intern**  
+*Hartford, CT*  
+•  Created a batch rating tool that priced hundreds of health plans simultaneously, using the prior rating engine  
+•  Produced a pricing study on the vision product using batch rating tool  
+•  Presented suggestions that could lead to an estimated 5% profit increase (used in pricing update)  
+:::
+::: {.column width="20%"}
+<div align="right">Summer 2019</div>
+:::
+::::
+  
+<p></p>
+  
+#####  **Oliver Wyman**  
+:::: {.columns}
+::: {.column width="80%"}
+**Data Analyst Intern**  
+*Atlanta, GA*  
+•  Led a risk analysis study from client data to final reports, presented to the client as a formal document  
+•  Evaluated dozens of risk studies for correctness and completeness, often leading to material changes
+:::
+::: {.column width="20%"}
+<div align="right">Summer 2018</div>
+:::
+::::
+  
+***
+###  Technical Skills  
+
+:::: {.columns}
+::: {.column width="33.33%"}
+####  Languages  
+:::: {.columns}
+::: {.column width="25%"}
+<p class="fa fa-fw fa-lg" style="font-size:Large; text-align:left">R</p><br>
+<p class="fa fa-fw fa-lg" style="font-size:Large; text-align:left">Python</p><br>
+<p class="fa fa-fw fa-lg" style="font-size:Large; text-align:left">SQL</p><br>
+<p class="fa fa-fw fa-lg" style="font-size:Large; text-align:left">VBA</p><br>
+<p class="fa fa-fw fa-lg" style="font-size:Large; text-align:left">C++</p><br>
+:::
+::: {.column width="50%"}
+<p class="fa fa-star fa-lg"></p>
+<p class="fa fa-star fa-lg"></p>
+<p class="fa fa-star fa-lg"></p>
+<p class="fa fa-star fa-lg"></p>
+<p class="fa fa-star-half-empty fa-lg"></p>
+<br>
+<p class="fa fa-star fa-lg"></p>
+<p class="fa fa-star fa-lg"></p>
+<p class="fa fa-star fa-lg"></p>
+<p class="fa fa-star-half-empty fa-lg"></p>
+<p class="fa fa-star-o fa-lg"></p>
+<br>
+<p class="fa fa-star fa-lg"></p>
+<p class="fa fa-star fa-lg"></p>
+<p class="fa fa-star fa-lg"></p>
+<p class="fa fa-star-o fa-lg"></p>
+<p class="fa fa-star-o fa-lg"></p>
+<br>
+<p class="fa fa-star fa-lg"></p>
+<p class="fa fa-star fa-lg"></p>
+<p class="fa fa-star fa-lg"></p>
+<p class="fa fa-star-o fa-lg"></p>
+<p class="fa fa-star-o fa-lg"></p>
+<br>
+<p class="fa fa-star fa-lg"></p>
+<p class="fa fa-star fa-lg"></p>
+<p class="fa fa-star-o fa-lg"></p>
+<p class="fa fa-star-o fa-lg"></p>
+<p class="fa fa-star-o fa-lg"></p>
+:::
+::::
+
+:::
+::: {.column width="33.33%"}
+#### Data Analysis Tools  
+:::: {.columns}
+::: {.column width="35%"}
+<p class="fa fa-fw fa-lg" style="font-size:Large; text-align:left">Tidyverse</p><br>
+<p class="fa fa-fw fa-lg" style="font-size:Large; text-align:left">ggplot</p><br>
+<p class="fa fa-fw fa-lg" style="font-size:Large; text-align:left">pandas</p><br>
+<p class="fa fa-fw fa-lg" style="font-size:Large; text-align:left">sklearn</p><br>
+<p class="fa fa-fw fa-lg" style="font-size:Large; text-align:left">Stan</p><br>
+:::
+::: {.column width="50%"}
+<p class="fa fa-star fa-lg"></p>
+<p class="fa fa-star fa-lg"></p>
+<p class="fa fa-star fa-lg"></p>
+<p class="fa fa-star fa-lg"></p>
+<p class="fa fa-star-half-empty fa-lg"></p>
+<br>
+<p class="fa fa-star fa-lg"></p>
+<p class="fa fa-star fa-lg"></p>
+<p class="fa fa-star fa-lg"></p>
+<p class="fa fa-star fa-lg"></p>
+<p class="fa fa-star-half-empty fa-lg"></p>
+<br>
+<p class="fa fa-star fa-lg"></p>
+<p class="fa fa-star fa-lg"></p>
+<p class="fa fa-star fa-lg"></p>
+<p class="fa fa-star fa-lg"></p>
+<p class="fa fa-star-o fa-lg"></p>
+<br>
+<p class="fa fa-star fa-lg"></p>
+<p class="fa fa-star fa-lg"></p>
+<p class="fa fa-star fa-lg"></p>
+<p class="fa fa-star-half-empty fa-lg"></p>
+<p class="fa fa-star-o fa-lg"></p>
+<br>
+<p class="fa fa-star fa-lg"></p>
+<p class="fa fa-star fa-lg"></p>
+<p class="fa fa-star fa-lg"></p>
+<p class="fa fa-star-o fa-lg"></p>
+<p class="fa fa-star-o fa-lg"></p>
+:::
+::::
+
+:::
+::: {.column width="33.33%"}
+#### Statistical Analysis  
+:::: {.columns}
+::: {.column width="40%"}
+<p class="fa fa-fw fa-lg" style="font-size:Large; text-align:left">Regression</p><br>
+<p class="fa fa-fw fa-lg" style="font-size:Large; text-align:left">Bayesian</p><br>
+<p class="fa fa-fw fa-lg" style="font-size:Large; text-align:left">Multivariate</p><br>
+<p class="fa fa-fw fa-lg" style="font-size:Large; text-align:left">NLP</p><br>
+<p class="fa fa-fw fa-lg" style="font-size:Large; text-align:left">Unsupervised</p><br>
+:::
+::: {.column width="50%"}
+<p class="fa fa-star fa-lg"></p>
+<p class="fa fa-star fa-lg"></p>
+<p class="fa fa-star fa-lg"></p>
+<p class="fa fa-star fa-lg"></p>
+<p class="fa fa-star-half-empty fa-lg"></p>
+<br>
+<p class="fa fa-star fa-lg"></p>
+<p class="fa fa-star fa-lg"></p>
+<p class="fa fa-star fa-lg"></p>
+<p class="fa fa-star fa-lg"></p>
+<p class="fa fa-star-o fa-lg"></p>
+<br>
+<p class="fa fa-star fa-lg"></p>
+<p class="fa fa-star fa-lg"></p>
+<p class="fa fa-star fa-lg"></p>
+<p class="fa fa-star-half-empty fa-lg"></p>
+<p class="fa fa-star-o fa-lg"></p>
+<br>
+<p class="fa fa-star fa-lg"></p>
+<p class="fa fa-star fa-lg"></p>
+<p class="fa fa-star fa-lg"></p>
+<p class="fa fa-star-o fa-lg"></p>
+<p class="fa fa-star-o fa-lg"></p>
+<br>
+<p class="fa fa-star fa-lg"></p>
+<p class="fa fa-star fa-lg"></p>
+<p class="fa fa-star fa-lg"></p>
+<p class="fa fa-star-o fa-lg"></p>
+<p class="fa fa-star-o fa-lg"></p>
+:::
+::::
+
+
+:::
+::::
+
+#### Machine Learning  
+Classification/Regression Trees, Deep learning, Support Vector Machines, Naive Bayes, K-nearest neighbors, Linear/Quadratic Discriminant Analysis, K-Means, Agglomerative Clustering, Regularization, Principal Component Analysis,  Random Forests, Kernel Density Estimation, and SARIMA
+
+#### Other Tools  
+Exposure to Hadoop, Databricks, and h2o
+
+***
+
+###  Education  
+
+#####  **Brigham Young University** (BYU)
+<p style="margin-top: -10px">*Provo, UT*</p>
+
+**Master's in Statistics**  
+2019 to 2021  
+3.93 GPA  
+
+**Bachelor's in Statistics (emphasis in Actuarial Science)**  
+2016 to 2021  
+4.00 GPA  
+
+
+***
+
+###  Awards and Achievements  
+#####  Competitions won
+<ul style="margin-top: -10px">
+<li>Domo Data Analytics Case Competition, BYU 2020</li>
+<li>BYU Student Research Conference, BYU 2020 and 2018</li>
+<li>CAS Data Visualization Case Competition, ASU 2019</li>
+</ul>
+
+#####  Scholarships
+<ul style="margin-top: -10px">
+<li>BYU Undergraduate Full Academic Scholarship</li>
+<li>CAS Trust Scholarship</li>
+<li>Intel's Andy Grove Scholarship</li>
+<li>BYU Statistics Department Graduate Full Academic Scholarship</li>
+</ul>
+  
+#####  Other
+<ul style="margin-top: -10px">
+<li>Fluent in Spanish</li>
+<li>Statistics Department Dean's List, 2016 to present</li>
+<li>Eagle Scout</li>
+</ul> 
+
+  
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  
+<p style="text-align: center;">
+    <a href="mailto:cason.wight@gmail.com?subject = Feedback&body = Message" class="fa fa-send fa-lg fa-fw"></a>
+    <a href="https://www.linkedin.com/in/casonwight/" class="fa fa-linkedin fa-lg fa-fw"></a>
+    <a href="https://github.com/casonwight" class="fa fa-github fa-lg fa-fw"></a>
+</p>
+
+<a href="Resume 2020.pdf" download><p style="text-align:center">Download my Resume</p></a>
+
+<p style="text-align:center; font-size:75%; color:grey">Made by Cason Wight</p>

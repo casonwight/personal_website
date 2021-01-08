@@ -110,3 +110,4 @@ This undergraduate research project was in collaboration with Dr. Brian Hartman,
 </p>
 
 <a href="Resume 2020.pdf" download><p style="text-align:center">Download my Resume</p></a>
+<p style="text-align:center; font-size:75%; color:grey">Made by Cason Wight</p>
