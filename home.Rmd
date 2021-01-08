@@ -85,14 +85,14 @@ layout: default
 ::: {.col-md-4}
 ####  Languages  
 :::: {.columns}
-::: {.column width="25%"}
+::: {.column width="40%"}
 <p class="fa fa-fw fa-lg" style="font-size:Large; text-align:left">R</p><br>
 <p class="fa fa-fw fa-lg" style="font-size:Large; text-align:left">Python</p><br>
 <p class="fa fa-fw fa-lg" style="font-size:Large; text-align:left">SQL</p><br>
 <p class="fa fa-fw fa-lg" style="font-size:Large; text-align:left">VBA</p><br>
 <p class="fa fa-fw fa-lg" style="font-size:Large; text-align:left">C++</p><br>
 :::
-::: {.column width="75%"}
+::: {.column width="60%"}
 <p class="fa fa-star fa-lg"></p>
 <p class="fa fa-star fa-lg"></p>
 <p class="fa fa-star fa-lg"></p>
@@ -129,14 +129,14 @@ layout: default
 ::: {.col-md-4}
 #### Data Analysis Tools  
 :::: {.columns}
-::: {.column width="35%"}
+::: {.column width="40%"}
 <p class="fa fa-fw fa-lg" style="font-size:Large; text-align:left">Tidyverse</p><br>
 <p class="fa fa-fw fa-lg" style="font-size:Large; text-align:left">ggplot</p><br>
 <p class="fa fa-fw fa-lg" style="font-size:Large; text-align:left">pandas</p><br>
 <p class="fa fa-fw fa-lg" style="font-size:Large; text-align:left">sklearn</p><br>
 <p class="fa fa-fw fa-lg" style="font-size:Large; text-align:left">Stan</p><br>
 :::
-::: {.column width="65%"}
+::: {.column width="60%"}
 <p class="fa fa-star fa-lg" style="text-align:right"></p>
 <p class="fa fa-star fa-lg" style="text-align:right"></p>
 <p class="fa fa-star fa-lg" style="text-align:right"></p>
