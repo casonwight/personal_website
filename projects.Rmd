@@ -2,7 +2,34 @@
 title: "Project Portfolio"
 ---
 
+The projects included are from personal interest, school asignments, or internships. The blog posts either summarize results or demonstrate a concept. The Personal projects include code and other details.
 
+#  Personal Projects  
+
+<a href="Stat 651 Project/Project Report.pdf" download><p style="font-size:large; margin-bottom:0">Impact of Covid on NFL Attendance (Bayesian Time Series)</p></a>
+<p style="margin-bottom:0">**Code:** <a href="Stat 651 Project/Analysis Code.Rmd" download>Analysis (.Rmd)</a> | <a href="Stat 651 Project/final_stan.stan" download>Model (.stan)</a></p>
+<a href="Stat 651 Project/Project Presentation.pdf" download><p style="margin-bottom:0">Slides</p></a>
+*Dec 5, 2020*
+
+<a href="Stat 666 Project/Project Report.pdf" download><p style="font-size:large; margin-bottom:0">Predicting BYU Speech Authorship (Natural Language Processing)</p></a>
+<p style="margin-bottom:0">**Code:** <a href="Stat 666 Project/clean_analysis.py" download>Analysis (.py)</a> | <a href="Stat 666 Project/EDA.py" download>Exploratory Data Analysis (.py)</a></p>
+<a href="Stat 666 Project/Final Project.pptx" download><p style="margin-bottom:0">Slides</p></a>
+*Dec 4, 2020*
+
+
+#  Blog Posts   
+
+<a href = "https://medium.com/xandr-tech/floor-price-for-first-price-auctions-e6e66c966451"><p style="font-size:large; margin-bottom:0">Floor Price Algorithm in Ad Auctions</p></a>
+**Medium**  
+*Oct 23, 2020*  
+
+<a href = "https://statexchange.netlify.app/2020/04/02/infection-spread/"><p style="font-size:large; margin-bottom:0">Simulating Infection Spread</p></a>
+**Statexchange** (personal blog, in progress)  
+*Apr 2, 2020* 
+
+<a href = "https://statexchange.netlify.app/2020/03/05/bootstrapping/"><p style="font-size:large; margin-bottom:0">Bootstrapping</p></a>
+**Statexchange** (personal blog, in progress)  
+*Mar 5, 2020* 
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   
@@ -11,3 +38,4 @@ title: "Project Portfolio"
     <a href="https://www.linkedin.com/in/casonwight/" class="fa fa-linkedin fa-lg fa-fw"></a>
     <a href="https://github.com/casonwight" class="fa fa-github fa-lg fa-fw"></a>
 </p>
+<a href="Resume 2020.pdf" download><p style="text-align:center">Download my Resume</p></a>

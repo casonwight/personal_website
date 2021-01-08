@@ -35,3 +35,4 @@ He is passionate about data visualization and is interested in the trade-off bet
     <a href="https://www.linkedin.com/in/casonwight/" class="fa fa-linkedin fa-lg fa-fw"></a>
     <a href="https://github.com/casonwight" class="fa fa-github fa-lg fa-fw"></a>
 </p>
+<a href="Resume 2020.pdf" download><p style="text-align:center">Download my Resume</p></a>

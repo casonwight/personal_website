@@ -1,35 +1,105 @@
 ---
 title: "Research"
 output: 
-  html_document:
-    number_sections: true
+  html_document
 ---
 
 Research is shown with the most recent projects first. Some of these projects are more theoretical in nature, while others are applied. My undergraduate degree was in statistics with an emphasis in actuarial science. I then decided to pursue a career in data science, coupled with a Master's in statistics.
 
-#  Inference in Semi-Markov Models with Panel Data  
+###  Inference in Semi-Markov Models with Panel Data  
+:::: {.columns}
+::: {.column width="10%"}
+Description
+:::
+::: {.column width="90%"}
 Semi-Markov processes effectively model waiting times and probabilities for many multi-state scenarios.  In practice, data are collected at specific points in time where the stage of a process is observed at regular intervals. Intermittently observed measurements such as these are known as *panel data*. This project estimates the parameters of a semi-Markov model with panel data. The state-of-the-art technique (proposed by [Aralis and Brookmeyer](https://journals.sagepub.com/doi/full/10.1177/0962280217736342)) uses the stochastic expectation-maximization (SEM) algorithm for inference. One setback to this method is the large computational burden of the sampling process. Our goal is to improve upon this method by adjusting the expectation step to avoid such sampling. Key skills in this project include semi-Markov modeling and distributional truncation.
+:::
+::::
 
-I am working on this project as a Master's thesis with Dr. Richard Warr as a mentor and coauthor. I presented this project at BYU's 2020 physical and mathematical Spring Research Conference, winning first place in a session with seven graduate student presentations. Publication of this paper is planned for 2021.   
+:::: {.columns}
+::: {.column width="10%"}
+Outcome
+:::
+::: {.column width="90%"}
+I am working on this project as a Master's thesis with Dr. Richard Warr as a mentor and coauthor. I presented this project at BYU's 2020 physical and mathematical Spring Research Conference, winning first place in the session. Publication of this paper is planned for 2021.   
+:::
+::::
   
-  
-#  Chronic Kidney Disease Costs and Progression  
+###  Chronic Kidney Disease Costs and Progression  
+:::: {.columns}
+::: {.column width="10%"}
+Description
+:::
+::: {.column width="90%"}
 Chronic Kidney Disease (CKD) is a global health issue, mainly affecting the elderly. Roughly one in ten people globally are affected by CKD, which can be developed at any age. CKD and end-stage renal disease (ESRD) is especially prevalent in upper-middle and high-income countries. The higher the CKD stage of a patient, the higher the costs. The purpose of this paper is to model the progression and costs associated with CKD using sample data from a Medicare population and a private insurance population. Key skills involved in this project include generalized linear modeling, dimension reduction using regularization, and data visualization.
+:::
+::::
 
+:::: {.columns}
+::: {.column width="10%"}
+Outcome
+:::
+::: {.column width="90%"}
 This project is also in collaboration with the Society of Actuaries (SOA), Dr. Brian Hartman, Dr. Richard Warr, and another student. Publication of this paper is planned for 2021. We also plan to present at an SOA conference in 2021, yet to be determined.
+:::
+::::
   
-  
-#  Error Bounds for Convolutions using the Fast-Fourier Tranform (FFT)  
+###  Error Bounds for Convolutions using the Fast-Fourier Tranform (FFT)  
+:::: {.columns}
+::: {.column width="10%"}
+Publication Link
+:::
+::: {.column width="90%"}
+[*Methodology and Computing in Applied Probability*](https://link.springer.com/article/10.1007/s11009-019-09739-z)
+:::
+::::
+
+:::: {.columns}
+::: {.column width="10%"}
+Description
+:::
+::: {.column width="90%"}
 The Laplace transform or moment-generating function of a distribution is not always analytically available. Convolutions in these scenarios can be estimated using the discrete Fourier transform. The computationally fast implementation of this transform (FFT) is widely available. This project specifies calculations for exact error bounds involved in convolutions using the FFT. Key skills involved in this project include Monte Carlo sampling, advanced probability theory, and statistical computing.
+:::
+::::
 
-This project was mentored and coauthored by Dr. Richard Warr. The paper was published by [*Methodology and Computing in Applied Probability*](https://link.springer.com/article/10.1007/s11009-019-09739-z) in 2020. I presented this project at BYU's 2018 physical and mathematical Spring Research Conference, winning first place in a session with eight presentations.
+:::: {.columns}
+::: {.column width="10%"}
+Outcome
+:::
+::: {.column width="90%"}
+This project was mentored and coauthored by Dr. Richard Warr. The paper was published by [*Methodology and Computing in Applied Probability*](https://link.springer.com/article/10.1007/s11009-019-09739-z) in 2020. I presented this project at BYU's 2018 physical and mathematical Spring Research Conference, winning first place in the session.
+:::
+::::
+
   
-  
-#  Auto Loss Cost Trends  
+###  Auto Loss Cost Trends  
+:::: {.columns}
+::: {.column width="10%"}
+Publication Link
+:::
+::: {.column width="90%"}
+[Casualty Actuarial Society](https://www.casact.org/press/index.cfm?fa=viewArticle&articleID=4174) and [Society of Actuaries](https://www.soa.org/resources/research-reports/2018/auto-loss-cost-trends/)
+:::
+::::
+
+:::: {.columns}
+::: {.column width="10%"}
+Description
+:::
+::: {.column width="90%"}
 The purpose of this research is to explore the key drivers of automobile claim severity and frequency in the United States. This is a recurring project, as key drivers may change from year to year. Actuaries are particularly interested in this problem. Key skills involved in this project include random forest modeling, advanced regression, time series analysis (ARIMA), and added variable analysis. 
+:::
+::::
 
+:::: {.columns}
+::: {.column width="10%"}
+Outcome
+:::
+::: {.column width="90%"}
 This undergraduate research project was in collaboration with Dr. Brian Hartman, the Society of Actuaries (SOA), the Casualty Actuarial Society (CAS), and a few other undergraduate students. A paper was published through the [CAS](https://www.casact.org/press/index.cfm?fa=viewArticle&articleID=4174) and [SOA](https://www.soa.org/resources/research-reports/2018/auto-loss-cost-trends/) in 2018. I presented the research, along with three other students, at the [CAS annual meeting](https://www.pathlms.com/cas/events/1380) in November, 2018. The [*Research Insights*](https://www.stitcher.com/show/research-insights-a-society-of-actuaries-podcast/episode/research-insights-auto-loss-cost-trends-55030097) podcast featured this project in an episode as well.
-
+:::
+::::
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   
@@ -38,3 +108,5 @@ This undergraduate research project was in collaboration with Dr. Brian Hartman,
     <a href="https://www.linkedin.com/in/casonwight/" class="fa fa-linkedin fa-lg fa-fw"></a>
     <a href="https://github.com/casonwight" class="fa fa-github fa-lg fa-fw"></a>
 </p>
+
+<a href="Resume 2020.pdf" download><p style="text-align:center">Download my Resume</p></a>

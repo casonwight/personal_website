@@ -1,0 +1,908 @@
+---
+title: "Extra Code"
+author: "Cason Wight"
+date: "12/4/2020"
+output:
+  html_document:
+    df_print: paged
+fig_width: 8.5
+fig_height: 4
+---
+
+## Packages  
+
+```{r libraries, message = FALSE, warning = FALSE}
+library(tidyverse)
+library(rstan)
+library(scales)
+library(mvtnorm)
+library(bayesplot)
+library(rvest)
+library(loo)
+```
+
+# EDA  
+
+## Look at NFL Revenue  
+
+```{r revenue , warning=FALSE}
+revenue <- data.frame(Year = factor(2010:2020), 
+           Total_Revenue = c(8.35, 8.82, 9.17, 9.58, 11.09, 12.16, 13.16, 13.68, 14.48, 15.26, NA),
+           Label = c(rep("",9), "$15.26 B", "")) 
+
+ggplot(revenue, aes(x = Year, y = Total_Revenue)) + 
+  geom_bar(stat = "identity", width = .4, fill = "royalblue") + 
+  theme_light() + 
+  labs(title = "Total NFL Revenue", x = "Year", y = "Revenue (in Billion USDs)") + 
+  geom_text(aes(label = Label), nudge_y = 1) +
+  ylim(c(0,max(revenue$Total_Revenue)*1.3))
+```
+
+## Read in the data  
+
+```{r read_in_data, message=FALSE, warning=FALSE}
+tidy_tuesday_URL <- 'https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-02-04/'
+attendance <- read_csv(paste0(tidy_tuesday_URL, 'attendance.csv'))
+games <- read_csv(paste0(tidy_tuesday_URL, 'games.csv'))
+
+all_data <- games %>%
+  mutate(week = as.numeric(week)) %>% 
+  left_join(attendance, by = c("home_team_name" = "team_name", "year" = "year", "week" = "week")) %>% 
+  select(year, week, home_team_name, weekly_attendance, winner, away_team_name) %>% 
+  filter(!is.na(weekly_attendance)) %>% 
+  mutate(home_team_won = str_detect(winner, home_team_name)*1)
+
+all_data %>% head()
+```
+
+## Format data for manipulation  
+
+```{r data.reshape, message=FALSE}
+wins <- all_data %>% group_by(year, winner) %>% 
+  summarize(num_games_won = length(week)) %>% 
+  ungroup() %>% 
+  mutate(home_team_name = word(winner,-1)) %>% 
+  select(year, home_team_name, num_games_won)
+
+home_games <- all_data %>% 
+  group_by(year, home_team_name) %>% 
+  summarize(num_home_games = length(week)) %>%
+  mutate(team = home_team_name) %>% 
+  select(-home_team_name) %>% 
+  ungroup()
+
+num_games <- all_data %>% 
+  group_by(year, away_team_name) %>% 
+  summarize(num_away_games = length(week)) %>% 
+  ungroup() %>% 
+  mutate(team = away_team_name) %>% 
+  select(-away_team_name) %>% 
+  right_join(home_games) %>% 
+  mutate(num_games = num_away_games + num_home_games, home_team_name = team) %>% 
+  select(year, home_team_name, num_games)
+
+data_reshape <- all_data %>% 
+  group_by(year, home_team_name) %>% 
+  summarize(total_attendance = mean(weekly_attendance)) %>% 
+  ungroup() %>% 
+  left_join(num_games) %>% 
+  left_join(wins) %>% 
+  mutate(num_games_won = ifelse(is.na(num_games_won),0,num_games_won)) %>% 
+  group_by(home_team_name) %>% 
+  mutate(prev_attendance = lag(total_attendance), prev_games_won = lag(num_games_won)) %>% 
+  ungroup() %>% 
+  filter(!is.na(prev_attendance)) %>% 
+  mutate(home_team_name = as.factor(home_team_name), prev_games_won = as.numeric(prev_games_won)) %>% 
+  filter(home_team_name != "Texans")
+```
+
+
+## Explore the attendance and number of wins  
+
+```{r plot.data, message = FALSE, warning = FALSE}
+yearly_average <- data_reshape %>% 
+  group_by(year) %>% 
+  summarize(total_attendance = mean(total_attendance)) %>% 
+  mutate(home_team_name = "Average") 
+
+data_reshape %>%
+  filter(home_team_name %in% c("Patriots", "Seahawks","Chiefs","Browns","Chargers","Cowboys")) %>% 
+  ggplot(aes(y = total_attendance, x = year, color = home_team_name)) +
+  geom_line() + 
+  geom_line(data=yearly_average, aes(y=total_attendance, x=year, color = home_team_name), color = "black", lwd = 2) + 
+  labs(title = "Average Home-Game Attendance", color = "Team", x = "Year", y = "Attendance") +
+  scale_y_continuous(labels = scales::comma) + 
+  theme_light()
+
+team_names <- data_reshape %>% 
+  pull(home_team_name) %>% 
+  unique() %>% 
+  as.character()
+
+for(team_name in team_names){
+  time_plot <- data_reshape %>% 
+    filter(home_team_name == team_name) %>% 
+    ggplot(aes(y = total_attendance, x = year)) +
+    geom_line() +
+    geom_point(aes(size = prev_games_won)) +
+    labs(title = team_name, x = "Year", y = "Average Home Game Attendance") + 
+    scale_y_continuous(labels = scales::comma)
+  print(time_plot)
+}
+
+labs_included <- data_reshape %>% 
+  group_by(home_team_name) %>% 
+  summarize(total_games_won = sum(num_games_won)) %>% 
+  ungroup() %>% 
+  mutate(home_team_name = fct_reorder(home_team_name, total_games_won)) %>% 
+  pull(home_team_name) %>% 
+  levels()
+
+labs_included[c(seq(2,30, 3), seq(3,30,3))] <- ""
+
+
+data_reshape %>% 
+  group_by(home_team_name) %>% 
+  summarize(total_games_won = sum(num_games_won), total_games = sum(num_games)) %>% 
+  ungroup() %>% 
+  mutate(win_pct = total_games_won / total_games) %>% 
+  mutate(home_team_name = fct_reorder(home_team_name, total_games_won)) %>% 
+  ggplot(aes(x=home_team_name, y=total_games_won, fill = total_games_won)) +
+  geom_bar(stat="identity") + 
+  coord_flip() + 
+  geom_hline(yintercept = .5*304, lty = "dashed") + 
+  scale_y_continuous(name = "Total Games Won", sec.axis = sec_axis(trans=~./304, name = "Win Percentage", labels = scales::percent)) + 
+  labs(title = sprintf("Regular Game Wins (%s to %s)", 2000, 2019), x = "Team", y = "Total Games Won", fill = "") + 
+  #scale_x_discrete(labels = labs_included) +
+  theme_light() + 
+  theme(legend.position = "none")
+
+
+data_reshape %>% 
+  group_by(home_team_name) %>% 
+  summarize(avg_attendance = mean(total_attendance)) %>% 
+  ungroup() %>%  
+  mutate(home_team_name = fct_reorder(home_team_name, avg_attendance)) %>% 
+  ggplot(aes(x=home_team_name, y=avg_attendance, fill = avg_attendance)) +
+  geom_bar(stat="identity") + 
+  coord_flip() + 
+  scale_y_continuous(labels = scales::comma) + 
+  scale_fill_continuous(labels = scales::comma) +
+  labs(title = sprintf("Average Home-Game Attendance from %s to %s", 2000, 2019), x = "Team", y = "Average Home-Game Attendance", fill = "") + 
+  theme(legend.position = "none")
+```
+
+# Modeling  
+
+## Frequentist LM (with lag(1) effect)  
+
+```{r linear_model}
+options(scipen = 8)
+lin_mod <- lm(total_attendance ~ -1 + home_team_name + home_team_name * prev_attendance 
+              + prev_games_won - prev_attendance, data = data_reshape %>% filter(home_team_name!="Texans"))
+summary(lin_mod)$coefficients[,1]
+```
+
+## Data prep for stan  
+
+```{r stan.data}
+t <- data_reshape %>% 
+  pull(year) %>% 
+  unique()
+
+y <- data_reshape %>% 
+  select(home_team_name, total_attendance, year) %>% 
+  pivot_wider(names_from = home_team_name, values_from = total_attendance) %>% 
+  select(-year)
+
+ylag1 <- data_reshape %>% 
+  select(home_team_name, prev_attendance, year) %>% 
+  pivot_wider(names_from = home_team_name, values_from = prev_attendance) %>% 
+  select(-year)
+
+x <- data_reshape %>% 
+  select(home_team_name, prev_games_won, year) %>% 
+  pivot_wider(names_from = home_team_name, values_from = prev_games_won) %>% 
+  select(-year)
+
+num_teams <- ncol(y)
+teams <- colnames(y)
+n <- nrow(y)
+
+known_data <- list(t = t, y = y, ylag1 = ylag1, x = x, 
+                   num_teams = num_teams, teams = teams, 
+                   n = n, C = num_teams)
+```
+
+## Priors  
+
+```{r priors}
+# Tight priors based on my little knowledge
+priors1 <- list(mu_a = 30000, sigma_a = 20000,
+                mu_b = .7, sigma_b = .5,
+                mu_theta = 1000, sigma_theta = 1000,
+                a_sigma = 10000^2 / 15000^2, b_sigma = 10000 / 15000^2,
+                lambda = 8000, eta = .1)
+
+# Noninformative priors
+priors2 <- list(mu_a = 66000, sigma_a = 2000000,
+                mu_b = 0, sigma_b = 10,
+                mu_theta = 0, sigma_theta = 2000000,
+                a_sigma = 5000^2 / 100000^2, b_sigma = 5000 / 100000^2,
+                lambda = 100000, eta = 20)
+
+# Blend of the first two
+priors3 <- list(mu_a = 66000, sigma_a = 6000,
+                mu_b = .6, sigma_b = .2,
+                mu_theta = 1000, sigma_theta = 500,
+                a_sigma = 5000^2 / 1000^2, b_sigma = 5000 / 1000^2,
+                lambda = 15000, eta = .4)
+```
+
+
+## Running the Model in Stan  
+
+<!-- This is not evaluated, because a separate script was run on the server -->
+```{r fit.models, eval = FALSE}
+options(mc.cores = nCores)
+rstan_options(auto_write = TRUE)
+
+# Priors 1
+fit <- stan(model_code = readLines("final_stan.stan"),
+            data = c(known_data, priors1), iter = 20000, warmup = 1000, 
+            thin = 2, chains = 4, control = list(max_treedepth = 20))
+samples <- rstan::extract(fit)
+
+# Priors 2
+fit2 <- stan(model_code = readLines("final_stan.stan"),
+            data = c(known_data, priors2), iter = 20000, warmup = 1000, 
+            thin = 2, chains = 4, control = list(max_treedepth = 20))
+samples2 <- rstan::extract(fit)
+
+# Priors 3
+fit3 <- stan(model_code = readLines("final_stan.stan"),
+            data = c(known_data, priors3), iter = 20000, warmup = 1000, 
+            thin = 2, chains = 4, control = list(max_treedepth = 20))
+samples3 <- rstan::extract(fit)
+```
+
+<!-- The results from the script pulled in, instead of re-running each time -->
+```{r load_all_samps, echo = FALSE, results='hide'}
+load("stan_fit_final_1.dat")
+samples1 <- rstan::extract(fit)
+cat(sprintf("Prior 1\n____________\nAlpha: %3.4f\nBeta: %3.4f\nTheta: %3.4f\nSigma: %3.4f\n\n\n", 
+            mean(samples1$overall_alpha), 
+            mean(samples1$overall_beta), 
+            mean(samples1$theta), 
+            mean(samples1$sigma)))
+
+load("stan_fit_final_2.dat")
+samples2 <- rstan::extract(fit2)
+cat(sprintf("Prior 2\n____________\nAlpha: %3.4f\nBeta: %3.4f\nTheta: %3.4f\nSigma: %3.4f\n\n\n", 
+            mean(samples2$overall_alpha), 
+            mean(samples2$overall_beta), 
+            mean(samples2$theta), 
+            mean(samples2$sigma)))
+
+load("stan_fit_final_3.dat")
+samples3 <- rstan::extract(fit3)
+cat(sprintf("Prior 3\n____________\nAlpha: %3.4f\nBeta: %3.4f\nTheta: %3.4f\nSigma: %3.4f\n\n\n", 
+            mean(samples3$overall_alpha), 
+            mean(samples3$overall_beta), 
+            mean(samples3$theta), 
+            mean(samples3$sigma)))
+```
+
+# Results  
+
+## Means and Std. Dev.s  
+
+```{r avg_results}
+get_ests <- function(samples){
+  cbind(theta = mean(samples$theta), 
+        alpha = mean(samples$overall_alpha), 
+        beta = mean(samples$overall_beta), 
+        colMeans(samples$alphas) %>% 
+          matrix() %>% 
+          t() %>% 
+          as.data.frame() %>% 
+          setNames(paste0("alpha_",team_names)), 
+        colMeans(samples$betas) %>% 
+          matrix() %>% 
+          t() %>% 
+          as.data.frame() %>% 
+          setNames(paste0("beta_",team_names)), 
+        sigma = mean(samples$sigma)) %>% 
+    as.matrix() %>% 
+    rbind(cbind(theta = quantile(samples$theta, c(.025,.975)), 
+        alpha = quantile(samples$overall_alpha, c(.025,.975)), 
+        beta = quantile(samples$overall_beta, c(.025,.975)), 
+        apply(samples$alphas, 2, quantile, c(.025,.975)) %>% 
+          matrix(ncol = 2, byrow = TRUE) %>% 
+          t() %>% 
+          as.data.frame() %>% 
+          setNames(paste0("alpha_",team_names)), 
+        apply(samples$betas, 2, quantile, c(.025,.975)) %>% 
+          matrix(ncol = 2, byrow = TRUE) %>% 
+          t() %>% 
+          as.data.frame() %>% 
+          setNames(paste0("beta_",team_names)), 
+        sigma = quantile(samples$sigma, c(.025,.975))) %>% 
+    as.matrix())
+}
+get_ests(samples1)
+get_ests(samples2)
+get_ests(samples3)
+```
+
+
+
+## Plotting team-specific terms  
+
+```{r team.specific.results}
+plot1 <- summary(lin_mod)$coefficients[,1][33:63] %>% 
+  cbind(samples1$betas %>% colMeans()) %>% 
+  cbind(samples2$betas %>% colMeans()) %>% 
+  cbind(samples3$betas %>% colMeans()) %>% 
+  as.data.frame() %>% 
+  setNames(c("LM", "Prior 1", "Prior 2", "Prior 3")) %>% 
+  `rownames<-`(team_names) %>% 
+  mutate(team = team_names) %>% 
+  pivot_longer("LM":"Prior 3") %>% 
+  setNames(c("Team", "Model", "Value")) %>% 
+  ggplot(aes(x = Team, y = Value, fill = Model)) +
+  geom_bar(stat = "identity", position = "dodge") + 
+  coord_flip() + 
+  theme_light() + 
+  labs(title = "Team Attendance Effects", y = "Effect", x = "Team") + 
+  theme(legend.position = "none")
+
+plot2 <- summary(lin_mod)$coefficients[,1][1:31] %>% 
+  cbind(samples1$alphas %>% colMeans()) %>% 
+  cbind(samples2$alphas %>% colMeans()) %>% 
+  cbind(samples3$alphas %>% colMeans()) %>% 
+  as.data.frame() %>% 
+  setNames(c("LM", "Prior 1", "Prior 2", "Prior 3")) %>% 
+  `rownames<-`(team_names) %>% 
+  mutate(team = team_names) %>% 
+  pivot_longer("LM":"Prior 3") %>% 
+  setNames(c("Team", "Model", "Value")) %>% 
+  ggplot(aes(x = Team, y = Value, fill = Model)) +
+  geom_bar(stat = "identity", position = "dodge") + 
+  coord_flip() + 
+  theme_light() + 
+  labs(title = "Team Attendance Intercepts", y = "Intercept", x = "")
+
+gridExtra::grid.arrange(plot1, plot2, widths = c(1.5,2), ncol = 2)
+```
+
+## Predictions for 2020  
+
+```{r predictions}
+curr_games_won <- data_reshape %>% 
+  filter(year == 2019) %>% 
+  select(home_team_name, num_games_won, total_attendance) %>% 
+  pull(num_games_won)
+
+curr_attendance <- data_reshape %>% 
+  filter(year == 2019) %>% 
+  select(home_team_name, num_games_won, total_attendance) %>% 
+  pull(total_attendance)
+
+theta_added <- sapply(curr_games_won, function(x) x * samples1$theta)
+beta_added <- sapply(1:31, function(x) curr_attendance[x]*samples1$betas[,x])
+alpha_added <- samples1$alphas
+error_added <- t(sapply(samples1$sigma, function(x) rnorm(31,0, sd = x)))
+preds <- alpha_added + beta_added + theta_added + error_added
+colnames(preds) <- team_names
+
+pred_plots <- mcmc_areas(preds[,rev(order(colMeans(preds)))], prob = .95) 
+
+
+curr_attend_data <- "http://www.espn.com/nfl/attendance" %>% 
+  read_html() %>% 
+  html_nodes("table") %>% 
+  html_table() %>% 
+  .[[1]] %>% 
+  setNames(.[2,]) %>% 
+  .[-(1:2),] %>% 
+  select(2,5) %>% 
+  setNames(c("Team", "Attendance")) %>% 
+  mutate(Attendance = str_replace_all(Attendance, "-", "0")) %>% 
+  mutate(AVG = parse_number(Attendance)) 
+  
+
+curr_data2 <- attendance %>% 
+  group_by(team_name) %>% 
+  summarize(Team = first(team), .groups = "drop") %>% 
+  left_join(curr_attend_data, by = c("Team"="Team")) %>% 
+  select(team_name, Attendance) %>% 
+  setNames(c("Team", "Attendance")) %>% 
+  mutate(Attendance = parse_number(Attendance)) %>% 
+  replace_na(list(Team = "None", Attendance = 0)) %>% 
+  mutate(Team = factor(Team, levels = team_names)) %>% 
+  left_join(data.frame(Predicted = colMeans(preds), Team = colnames(preds)), by = c("Team" = "Team")) %>% 
+  mutate(Team = fct_reorder(Team, Predicted))
+
+
+pred_plots + theme_light() + 
+  scale_x_continuous(labels = scales::comma) + 
+  labs(title = "2020 Predicted Attendance", 
+       x = "Average Weekly Attendance",
+       y = "Team") + 
+  theme(panel.background = element_blank(), 
+        panel.grid.minor.x = element_blank(),  
+        panel.grid.major.x = element_blank(), 
+        panel.border = element_blank()) + 
+  geom_segment(data = curr_data2, 
+               aes(x = Attendance, xend = Attendance,
+                   y = as.numeric(Team)+1, yend = as.numeric(Team)), 
+               lwd = 1, col = "red") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) + 
+  coord_flip()
+```
+
+
+# Show which teams are most affected by Covid
+
+```{r most.affected}
+actual <- curr_data2 %>% pull(Attendance) %>% as.numeric() %>% rev() %>% .[-1] %>% rev()
+predicted <- colMeans(preds)
+
+# Attendance Most to least affected by Covid
+team_names[rev(order(predicted-actual))]
+```
+
+
+## Dollars lost by NFL due to Drop in Attendance  
+
+```{r}
+one_bil <- 1000000000
+
+rev_2019_bil <- revenue %>% filter(Year == 2019) %>% pull(Total_Revenue)
+sales_rev_2019 <- rev_2019_bil * one_bil * .15
+
+avg_seats_2019 <- data_reshape %>% filter(year == 2019) %>% pull(total_attendance) %>% sum()
+seats_2019 <- avg_seats_2019 * 8
+
+sales_rev_per_seat_2019 <- sales_rev_2019 / seats_2019
+
+predicted_sales_rev_2020 <- sum(predicted) * 8 * sales_rev_per_seat_2019
+actual_sales_rev_2020 <- sum(actual) * 8 * sales_rev_per_seat_2019
+
+lost_rev_2020 <- predicted_sales_rev_2020 - actual_sales_rev_2020
+lost_rev_2020_bil <- lost_rev_2020 / one_bil
+lost_rev_2020_bil
+```
+
+
+
+
+## Plotting the Team-Specific Attendance Effects  
+
+```{r visualize_results, message = FALSE, warning = FALSE}
+for(i in 1:3){
+  team_models <- rbind(apply(get(paste0("samples",i))$alphas, 2, mean), apply(get(paste0("samples",i))$betas, 2, mean))
+  colnames(team_models) <- team_names
+  rownames(team_models) <- c("intercept", "slope")
+  
+  mean_slope <- mean(samples2$overall_beta)
+  mean_int <- mean(samples2$overall_alpha)
+  
+  assign(paste0("plot", i), team_models %>% 
+    t() %>% 
+    as.data.frame() %>% 
+    mutate(team = rownames(.)) %>% 
+    ggplot(aes(color = team)) +
+    geom_abline(aes(slope = slope, intercept = intercept, color = team)) + 
+    geom_abline(aes(color = "Overall Center"), slope = mean_slope, intercept = mean_int, color = "black", lwd = 2) +
+    labs(x = "Prior Year Attendance", y = "Estimated Attendance", color = "", 
+         title = paste0("Team-Specific Effects (Prior ", i, ")")) + 
+    theme_light() + 
+    theme(legend.position = "none") + 
+    scale_x_continuous(label = scales::comma, limits = c(50000,86000)) + 
+    scale_y_continuous(label = scales::comma, limits = c(40000,86000)))
+  print(get(paste0("plot",i)))
+}
+
+```
+
+## Smallest and Largest Prior Year Attendance Effects  
+
+```{r}
+data.frame(team = team_names, 
+           effect = colMeans(samples2$betas),
+           lower = apply(samples2$betas, 2, quantile, .025),
+           upper = apply(samples2$betas, 2, quantile, .975)) %>% 
+  arrange(effect)
+```
+
+
+## Density Plots  
+
+```{r density_plots}
+get_all_density_plots <- function(samples){
+  all_samps <- samples$overall_alpha %>% 
+    cbind(samples$overall_beta) %>% 
+    cbind(samples$alphas) %>% 
+    cbind(samples$betas) %>% 
+    cbind(samples$theta) %>% 
+    cbind(samples$sigma) %>% 
+    as.data.frame() %>% 
+    setNames(c("alpha", "beta", 
+               paste0("alpha[\"",team_names,"\"]"), 
+               paste0("beta[\"",team_names,"\"]"), 
+               "theta", "sigma"))
+  
+  densities <- apply(all_samps, 2, density)
+    
+  all_dens <- data.frame(x = c(), y = c(), name = c())
+  for(i in 1:length(densities)) {
+    all_dens <- all_dens %>% rbind.data.frame(data.frame(x = densities[[i]]$x, 
+                                                         y = densities[[i]]$y, 
+                                                         name = colnames(all_samps)[i]))
+  }
+  
+  print(all_dens %>%
+    filter(name == "alpha") %>% 
+    ggplot(aes(x = x, y = y)) +
+    geom_line(lwd = 1) + 
+    labs(title = expression(paste("Density for ",alpha)), 
+         x = expression(alpha), y = "Density") + 
+      theme_light())
+  
+  print(all_dens %>%
+    filter(name == "beta") %>% 
+    ggplot(aes(x = x, y = y)) +
+    geom_line(lwd = 1) + 
+    labs(title = expression(paste("Density for ",beta)), 
+         x = expression(beta), y = "Density") + 
+    theme_light())
+  
+  
+  print(all_dens %>%
+    filter(str_detect(name, "alpha")) %>% 
+    filter(name != "alpha") %>% 
+    ggplot(aes(x = x, y = y)) +
+    geom_line(lwd = 1) + 
+    facet_wrap(~name, scales = "free_y", labeller = label_parsed) + 
+    labs(title = expression(paste("Density Plots for ",alpha["Team"])),
+         y = "Density", x = expression(alpha["Team"])) +
+      theme_light())
+  
+  print(all_dens %>%
+    filter(str_detect(name, "beta")) %>% 
+    filter(name != "beta") %>% 
+    ggplot(aes(x = x, y = y)) +
+    geom_line(lwd = 1) + 
+    facet_wrap(~name, scales = "free_y", labeller = label_parsed) + 
+    labs(title = expression(paste("Density Plots for ",beta["Team"])), 
+         y = "Density", x = expression(beta["Team"])) + 
+      theme_light())
+}
+
+get_all_density_plots(samples1)
+#get_all_density_plots(samples1)
+#get_all_density_plots(samples1)
+
+```
+
+# Diagnostics  
+
+## Trace plots  
+
+```{r trace_plots}
+get_all_trace_plots <- function(samples){
+  print(samples$overall_alpha %>% 
+    cbind(seq_along(.)) %>% 
+    as.data.frame() %>% 
+    setNames(c("alpha", "Index")) %>% 
+    ggplot(aes(x = Index, y = alpha)) +
+      geom_line() +
+      labs(title = expression(paste("Trace Plot of ",alpha)),
+           y = expression(alpha), x = "Index") + 
+    theme_light())
+  
+  print(samples$overall_beta %>% 
+    cbind(seq_along(.)) %>% 
+    as.data.frame() %>% 
+    setNames(c("beta", "Index")) %>% 
+    ggplot(aes(x = Index, y = beta)) +
+      geom_line() +
+      labs(title = expression(paste("Trace Plot of ",beta)),
+           y = expression(beta), x = "Index") + 
+    theme_light())
+  
+  print(samples$alphas %>% 
+    as.data.frame() %>% 
+    setNames(team_names) %>% 
+    pivot_longer(all_of(team_names)) %>%
+    group_by(name) %>% 
+    mutate(index = seq_along(value)) %>% 
+    ggplot(aes(y = value, x = index)) + 
+      geom_line() + 
+      facet_wrap(~name, scales = "free_y") +
+      labs(title = expression(paste("Trace Plots of ",alpha)),
+           y = expression(alpha), x = "Index") + 
+    theme_light())
+  
+  print(samples$betas %>% 
+    as.data.frame() %>% 
+    setNames(team_names) %>% 
+    pivot_longer(all_of(team_names)) %>%
+    group_by(name) %>% 
+    mutate(index = seq_along(value)) %>% 
+    ggplot(aes(y = value, x = index)) + 
+      geom_line() + 
+      facet_wrap(~name, scales = "free_y") +
+      labs(title = expression(paste("Trace Plots of ",beta)),
+           y = expression(beta), x = "Index") + 
+    theme_light())
+  
+  print(samples$theta %>% 
+    cbind(seq_along(.)) %>% 
+    as.data.frame() %>% 
+    setNames(c("Theta", "Index")) %>% 
+    ggplot(aes(x = Index, y = Theta)) +
+      geom_line() +
+      labs(title = expression(paste("Trace Plot of ",theta)),
+           y = expression(theta), x = "Index") + 
+    theme_light())
+  
+  print(samples$sigma %>% 
+    cbind(seq_along(.)) %>% 
+    as.data.frame() %>% 
+    setNames(c("Sigma", "Index")) %>% 
+    ggplot(aes(x = Index, y = Sigma)) +
+      geom_line() +
+      labs(title = expression(paste("Trace Plot of ",sigma)),
+           y = expression(sigma), x = "Index") + 
+    theme_light())
+}
+
+
+get_all_trace_plots(samples1)
+#get_all_trace_plots(samples2)
+#get_all_trace_plots(samples3)
+```
+
+## ACF Plots
+
+```{r acf_plots}
+get_all_acf_plots <- function(samples){
+  print(samples$overall_alpha %>% 
+    acf(plot=FALSE) %>% 
+    with(data.frame(lag,acf)) %>% 
+    ggplot(aes(x=lag,y=acf)) +
+    geom_bar(stat="identity", position = "identity") + 
+    labs(title = expression(paste("Autocorrelation Plot for ",alpha)),
+         x = "Lag", y = "Autocorrelation") + 
+    theme_light())
+  
+  print(samples$overall_beta %>% 
+    acf(plot=FALSE) %>% 
+    with(data.frame(lag,acf)) %>% 
+    ggplot(aes(x=lag,y=acf)) +
+    geom_bar(stat="identity", position = "identity") + 
+    labs(title = expression(paste("Autocorrelation Plot for ",beta)),
+         x = "Lag", y = "Autocorrelation") + 
+    theme_light())
+  
+  print(samples$alphas %>% 
+    as.data.frame() %>% 
+    setNames(team_names) %>% 
+    apply(2,acf,plot=FALSE) %>% 
+    lapply(function(x) x[[1]]) %>% 
+    do.call(what = rbind, args = .) %>% 
+    t() %>% 
+    as.data.frame() %>% 
+    pivot_longer(all_of(team_names)) %>% 
+    group_by(name) %>% 
+    mutate(index = seq_along(value)) %>% 
+    ggplot(aes(x = index, y = value)) +
+    geom_bar(stat = "identity", position = "identity") +
+    facet_wrap(~name, scales = "free_y") + 
+    labs(title = expression(paste("Autocorrelation Plots for ",alpha)),
+         x = "Lag", y = "Autocorrelation") + 
+    theme_light())
+  
+  print(samples$betas %>% 
+    as.data.frame() %>% 
+    setNames(team_names) %>% 
+    apply(2,acf,plot=FALSE) %>% 
+    lapply(function(x) x[[1]]) %>% 
+    do.call(what = rbind, args = .) %>% 
+    t() %>% 
+    as.data.frame() %>% 
+    pivot_longer(all_of(team_names)) %>% 
+    group_by(name) %>% 
+    mutate(index = seq_along(value)) %>% 
+    ggplot(aes(x = index, y = value)) +
+    geom_bar(stat = "identity", position = "identity") +
+    facet_wrap(~name, scales = "free_y") + 
+    labs(title = expression(paste("Autocorrelation Plots for ",beta)),
+         x = "Lag", y = "Autocorrelation") + 
+    theme_light())
+  
+  print(samples$theta %>% 
+    acf(plot=FALSE) %>% 
+    with(data.frame(lag,acf)) %>% 
+    ggplot(aes(x=lag,y=acf)) +
+    geom_bar(stat="identity", position = "identity") + 
+    labs(title = expression(paste("Autocorrelation Plot for ",theta)),
+         x = "Lag", y = "Autocorrelation") + 
+    theme_light())
+  
+  print(samples$sigma %>% 
+    acf(plot=FALSE) %>% 
+    with(data.frame(lag,acf)) %>% 
+    ggplot(aes(x=lag,y=acf)) +
+    geom_bar(stat="identity", position = "identity") + 
+    labs(title = expression(paste("Autocorrelation Plot for ",sigma)),
+         x = "Lag", y = "Autocorrelation") + 
+    theme_light())
+}
+
+get_all_acf_plots(samples1)
+#get_all_acf_plots(samples2)
+#get_all_acf_plots(samples3)
+```
+
+
+## Effective Sample Sizes and $\hat{R}$s  
+
+```{r comp_diagnostics}
+get_eff_sizes <- function(samples){
+  all_samps <- samples$overall_alpha %>% 
+    cbind(samples$overall_beta) %>% 
+    cbind(samples$alphas) %>% 
+    cbind(samples$betas) %>% 
+    cbind(samples$theta) %>% 
+    cbind(samples$sigma) %>% 
+    as.data.frame() %>% 
+    setNames(c("alpha", "beta", 
+               paste0("alpha[\"",team_names,"\"]"), 
+               paste0("beta[\"",team_names,"\"]"), 
+               "theta", "sigma"))
+  
+  apply(all_samps, 2, coda::effectiveSize)
+}
+
+get_eff_sizes(samples1)
+#get_eff_sizes(samples2)
+#get_eff_sizes(samples3)
+
+min(c(summary(fit)$summary[1:66,"Rhat"], summary(fit2)$summary[1:66,"Rhat"], summary(fit3)$summary[1:66,"Rhat"]))
+max(c(summary(fit)$summary[1:66,"Rhat"], summary(fit2)$summary[1:66,"Rhat"], summary(fit3)$summary[1:66,"Rhat"]))
+```
+
+## WAIC  
+
+```{r model_diagnostics, warning=FALSE, message=FALSE}
+samples1$log_lik %>% 
+  loo::waic()
+
+samples2$log_lik %>% 
+  loo::waic()
+
+samples3$log_lik %>% 
+  loo::waic()
+```
+
+
+# MCMC Sampling (Metropolis Sampler)  
+
+<!-- This code is not run. Instead, draws that were run earlier are pulled in below -->
+```{r MCMC, eval = FALSE}
+log_posterior <- function(theta, alphas, betas, alpha, beta, sigma){
+  alpha_mat <- matrix(rep(alphas,19), ncol = 31, byrow = TRUE)
+  beta_effect_mat <- matrix(rep(betas,19), ncol = 31, byrow = TRUE) * ylag1
+  sigma_mat <- matrix(sigma, nrow = 19, ncol = 31)
+  
+  log_like <- sum(dnorm(as.matrix(y), as.matrix(alpha_mat + beta_effect_mat + theta * x), sd = sigma_mat, log = TRUE))
+  prior <- sum(dnorm(alphas, alpha, sd = lambda, log = TRUE)) + 
+    sum(dnorm(betas, beta, sd = eta, log = TRUE)) +
+    dgamma(sigma, alpha_sigma, beta_sigma, log = TRUE) + 
+    dnorm(theta, mu_theta, sd = sigma_theta, log = TRUE) + 
+    dnorm(alpha, mu_alpha, sd = sigma_alpha, log = TRUE) + 
+    dnorm(beta, mu_beta, sd = sigma_beta, log = TRUE)
+  
+  log_like + prior
+}
+
+
+simple_lm <- lm(total_attendance ~ -1 + prev_games_won + home_team_name + home_team_name:prev_attendance - prev_attendance, data = data_reshape)
+alpha_start <- mean(simple_lm$coefficients[2:32])
+beta_start <- mean(simple_lm$coefficients[33:63])
+sigma_start <- summary(simple_lm)$sigma
+lm_starts <- c(simple_lm$coefficients, alpha_start, beta_start, sigma_start)
+
+get_MCMC_samps <- function(num_samps = 10000, burn.in = 1000, thin = 6,
+                           start_vals = lm_starts,
+                           priors = priors1,
+                           theta_var = 10^2, alphas_var = rep(100^2,31),
+                           betas_var = rep(.002^2,31), alpha_var = 100^2,
+                           beta_var = .002^2, sigma_var = 25^2){
+  mu_alpha <<- priors$mu_a
+  sigma_alpha <<- priors$sigma_a
+  mu_beta <<- priors$mu_b
+  sigma_beta <<- priors$sigma_b
+  mu_theta <<- priors$mu_theta
+  sigma_theta <<- priors$sigma_theta
+  alpha_sigma <<- priors$a_sigma
+  beta_sigma <<- priors$b_sigma
+  lambda <<- priors$lambda
+  eta <<- priors$eta
+  
+  num_tot_samps <- num_samps * thin + burn.in
+  MCMC_samples <- matrix(NA, nrow = num_tot_samps, ncol = 31*2 + 2 + 2)
+  colnames(MCMC_samples) <- c("theta",paste0("alpha[\"",team_names,"\"]"), paste0("beta[\"",team_names,"\"]"),"alpha","beta","sigma")
+  MCMC_samples[1,] <- start_vals
+  
+  proposal_Sigma <- diag(c(theta_var, alphas_var, betas_var, alpha_var, beta_var, sigma_var))
+  
+  num_accepted <- 1
+  
+  pb = txtProgressBar(min = 0, max = num_tot_samps, initial = 0, style = 3) 
+  
+  for(i in 2:num_tot_samps){
+    if((100 * i/num_tot_samps)%%1 == 0) setTxtProgressBar(pb,i)
+    
+    proposal <- rmvnorm(1, MCMC_samples[i-1,], proposal_Sigma)
+    proposal_posterior <- log_posterior(proposal[1],        # theta
+                                        proposal[2:32],     # alphas
+                                        proposal[33:63],    # betas
+                                        proposal[64],       # alpha
+                                        proposal[65],       # beta
+                                        proposal[66])       # sigma
+    prev_posterior <- log_posterior(MCMC_samples[i-1,1], 
+                                    MCMC_samples[i-1,2:32], 
+                                    MCMC_samples[i-1,33:63], 
+                                    MCMC_samples[i-1,64], 
+                                    MCMC_samples[i-1,65], 
+                                    MCMC_samples[i-1,66])
+    
+    MH_ratio <- exp(proposal_posterior - prev_posterior)
+    if(runif(1) < MH_ratio){
+      MCMC_samples[i,] <- proposal
+      num_accepted <- num_accepted + 1
+    } else{
+      MCMC_samples[i,] <- MCMC_samples[i-1,]
+    }
+    
+  }
+  
+  final_samps <- MCMC_samples[seq(from = burn.in, to = num_tot_samps, by = thin),]
+  
+  return(list(samps = final_samps, accept_ratio = num_accepted / num_tot_samps))
+}
+
+MCMC_results <- get_MCMC_samps(num_samps = 10000, burn.in = 5000, thin = 25, priors = priors1)
+```
+
+
+<!-- These samples took 15 hrs to obtain, so simply saving them here -->
+```{r get_MCMC, echo = FALSE}
+load("MCMC_results_final_1_more.dat")
+```
+
+## MCMC Results and Diagnostics  
+
+```{r MCMC_results}
+MCMC_results$accept_ratio
+
+MCMC_samps <- list(overall_beta = MCMC_results$samps[,65], 
+                   overall_alpha = MCMC_results$samps[,64],
+                   alphas = MCMC_results$samps[,2:32],
+                   betas = MCMC_results$samps[,33:63],
+                   theta = MCMC_results$samps[,1],
+                   sigma = MCMC_results$samps[,66])
+
+get_ests(MCMC_samps)
+get_all_trace_plots(MCMC_samps)
+get_all_acf_plots(MCMC_samps)
+get_all_density_plots(MCMC_samps)
+get_eff_sizes(MCMC_samps)
+```
+
+

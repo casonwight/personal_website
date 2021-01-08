@@ -13,4 +13,4 @@ navbar:
       href: projects.html
 output:
   html_document:
-    theme: united
+    css: united.css
