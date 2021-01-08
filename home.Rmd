@@ -1,6 +1,17 @@
 ---
+title: Cason Wight
 layout: default
+output: 
+  html_document:
+    includes:
+      in_header: "favicon.html" 
 ---
+
+<style>
+  .title{
+    display: none;
+  }
+</style>
 
 ![](stock_photo.png){width=100%,margin=0,padding=0}
 <h4>I am a data scientist looking to balance machine learning and statistical theory to deliver interpretable solutions. I am seeking positions that match research to application.</h4>
