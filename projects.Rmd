@@ -1,5 +1,9 @@
 ---
 title: "Project Portfolio"
+output: 
+  html_document:
+    includes:
+      in_header: "favicon.html" 
 ---
 
 The projects included are from personal interest, school asignments, or internships. The blog posts either summarize results or demonstrate a concept. The Personal projects include code and other details.

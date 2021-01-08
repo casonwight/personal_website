@@ -1,5 +1,9 @@
 ---
 title: "About Me"
+output: 
+  html_document:
+    includes:
+      in_header: "favicon.html" 
 ---
 
 :::: {.col-md-12}

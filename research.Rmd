@@ -1,7 +1,9 @@
 ---
 title: "Research"
 output: 
-  html_document
+  html_document:
+    includes:
+      in_header: "favicon.html" 
 ---
 
 Research is shown with the most recent projects first. Some of these projects are more theoretical in nature, while others are applied. My undergraduate degree was in statistics with an emphasis in actuarial science. I then decided to pursue a career in data science, coupled with a Master's in statistics.
