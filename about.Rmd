@@ -2,15 +2,15 @@
 title: "About Me"
 ---
 
-:::: {.columns}
-::: {.column width="30%"}
+:::: {.col-md-12}
+::: {.col-md-4}
 <br>
 ![](photo_circle.jpg){width=85%}
 
 
 
 :::
-::: {.column width="70%"}
+::: {.col-md-8}
 
 ### Cason Wight  
 Cason Wight is a data scientist, finishing a Master's in Statistics from BYU. He loves skiing, white-water rafting, tennis, and referring to himself in the third person. He grew up in Oregon and has always felt a pull to the Pacific Northwest.
