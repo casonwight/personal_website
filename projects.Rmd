@@ -6,7 +6,9 @@ output:
       in_header: "favicon.html" 
 ---
 
-The projects included are from personal interest, school asignments, or internships. The blog posts either summarize results or demonstrate a concept. The Personal projects include code and other details.
+### This page is still in progress; a few more projects are yet to be added  
+
+The projects included are from personal interest, school asignments, or internships. The blog posts either summarize results or demonstrate a concept. The personal projects include code and other details.
 
 ##  Personal Projects  
 :::: {.columns}
