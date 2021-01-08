@@ -81,8 +81,8 @@ layout: default
 ***
 ###  Technical Skills  
 
-:::: {.columns}
-::: {.column width="33.33%"}
+:::: {.col-md-12}
+::: {.col-md-4}
 ####  Languages  
 :::: {.columns}
 ::: {.column width="25%"}
@@ -92,7 +92,7 @@ layout: default
 <p class="fa fa-fw fa-lg" style="font-size:Large; text-align:left">VBA</p><br>
 <p class="fa fa-fw fa-lg" style="font-size:Large; text-align:left">C++</p><br>
 :::
-::: {.column width="50%"}
+::: {.column width="75%"}
 <p class="fa fa-star fa-lg"></p>
 <p class="fa fa-star fa-lg"></p>
 <p class="fa fa-star fa-lg"></p>
@@ -126,7 +126,7 @@ layout: default
 ::::
 
 :::
-::: {.column width="33.33%"}
+::: {.col-md-4}
 #### Data Analysis Tools  
 :::: {.columns}
 ::: {.column width="35%"}
@@ -136,41 +136,41 @@ layout: default
 <p class="fa fa-fw fa-lg" style="font-size:Large; text-align:left">sklearn</p><br>
 <p class="fa fa-fw fa-lg" style="font-size:Large; text-align:left">Stan</p><br>
 :::
-::: {.column width="50%"}
-<p class="fa fa-star fa-lg"></p>
-<p class="fa fa-star fa-lg"></p>
-<p class="fa fa-star fa-lg"></p>
-<p class="fa fa-star fa-lg"></p>
-<p class="fa fa-star-half-empty fa-lg"></p>
+::: {.column width="65%"}
+<p class="fa fa-star fa-lg" style="text-align:right"></p>
+<p class="fa fa-star fa-lg" style="text-align:right"></p>
+<p class="fa fa-star fa-lg" style="text-align:right"></p>
+<p class="fa fa-star fa-lg" style="text-align:right"></p>
+<p class="fa fa-star-half-empty fa-lg" style="text-align:right"></p>
 <br>
-<p class="fa fa-star fa-lg"></p>
-<p class="fa fa-star fa-lg"></p>
-<p class="fa fa-star fa-lg"></p>
-<p class="fa fa-star fa-lg"></p>
-<p class="fa fa-star-half-empty fa-lg"></p>
+<p class="fa fa-star fa-lg" style="text-align:right"></p>
+<p class="fa fa-star fa-lg" style="text-align:right"></p>
+<p class="fa fa-star fa-lg" style="text-align:right"></p>
+<p class="fa fa-star fa-lg" style="text-align:right"></p>
+<p class="fa fa-star-half-empty fa-lg" style="text-align:right"></p>
 <br>
-<p class="fa fa-star fa-lg"></p>
-<p class="fa fa-star fa-lg"></p>
-<p class="fa fa-star fa-lg"></p>
-<p class="fa fa-star fa-lg"></p>
-<p class="fa fa-star-o fa-lg"></p>
+<p class="fa fa-star fa-lg" style="text-align:right"></p>
+<p class="fa fa-star fa-lg" style="text-align:right"></p>
+<p class="fa fa-star fa-lg" style="text-align:right"></p>
+<p class="fa fa-star fa-lg" style="text-align:right"></p>
+<p class="fa fa-star-o fa-lg" style="text-align:right"></p>
 <br>
-<p class="fa fa-star fa-lg"></p>
-<p class="fa fa-star fa-lg"></p>
-<p class="fa fa-star fa-lg"></p>
-<p class="fa fa-star-half-empty fa-lg"></p>
-<p class="fa fa-star-o fa-lg"></p>
+<p class="fa fa-star fa-lg" style="text-align:right"></p>
+<p class="fa fa-star fa-lg" style="text-align:right"></p>
+<p class="fa fa-star fa-lg" style="text-align:right"></p>
+<p class="fa fa-star-half-empty fa-lg" style="text-align:right"></p>
+<p class="fa fa-star-o fa-lg" style="text-align:right"></p>
 <br>
-<p class="fa fa-star fa-lg"></p>
-<p class="fa fa-star fa-lg"></p>
-<p class="fa fa-star fa-lg"></p>
-<p class="fa fa-star-o fa-lg"></p>
-<p class="fa fa-star-o fa-lg"></p>
+<p class="fa fa-star fa-lg" style="text-align:right"></p>
+<p class="fa fa-star fa-lg" style="text-align:right"></p>
+<p class="fa fa-star fa-lg" style="text-align:right"></p>
+<p class="fa fa-star-o fa-lg" style="text-align:right"></p>
+<p class="fa fa-star-o fa-lg" style="text-align:right"></p>
 :::
 ::::
 
 :::
-::: {.column width="33.33%"}
+::: {.col-md-4}
 #### Statistical Analysis  
 :::: {.columns}
 ::: {.column width="40%"}
@@ -180,36 +180,36 @@ layout: default
 <p class="fa fa-fw fa-lg" style="font-size:Large; text-align:left">NLP</p><br>
 <p class="fa fa-fw fa-lg" style="font-size:Large; text-align:left">Unsupervised</p><br>
 :::
-::: {.column width="50%"}
-<p class="fa fa-star fa-lg"></p>
-<p class="fa fa-star fa-lg"></p>
-<p class="fa fa-star fa-lg"></p>
-<p class="fa fa-star fa-lg"></p>
-<p class="fa fa-star-half-empty fa-lg"></p>
+::: {.column width="60%"}
+<p class="fa fa-star fa-lg" style="text-align:right"></p>
+<p class="fa fa-star fa-lg" style="text-align:right"></p>
+<p class="fa fa-star fa-lg" style="text-align:right"></p>
+<p class="fa fa-star fa-lg" style="text-align:right"></p>
+<p class="fa fa-star-half-empty fa-lg" style="text-align:right"></p>
 <br>
-<p class="fa fa-star fa-lg"></p>
-<p class="fa fa-star fa-lg"></p>
-<p class="fa fa-star fa-lg"></p>
-<p class="fa fa-star fa-lg"></p>
-<p class="fa fa-star-o fa-lg"></p>
+<p class="fa fa-star fa-lg" style="text-align:right"></p>
+<p class="fa fa-star fa-lg" style="text-align:right"></p>
+<p class="fa fa-star fa-lg" style="text-align:right"></p>
+<p class="fa fa-star fa-lg" style="text-align:right"></p>
+<p class="fa fa-star-o fa-lg" style="text-align:right"></p>
 <br>
-<p class="fa fa-star fa-lg"></p>
-<p class="fa fa-star fa-lg"></p>
-<p class="fa fa-star fa-lg"></p>
-<p class="fa fa-star-half-empty fa-lg"></p>
-<p class="fa fa-star-o fa-lg"></p>
+<p class="fa fa-star fa-lg" style="text-align:right"></p>
+<p class="fa fa-star fa-lg" style="text-align:right"></p>
+<p class="fa fa-star fa-lg" style="text-align:right"></p>
+<p class="fa fa-star-half-empty fa-lg" style="text-align:right"></p>
+<p class="fa fa-star-o fa-lg" style="text-align:right"></p>
 <br>
-<p class="fa fa-star fa-lg"></p>
-<p class="fa fa-star fa-lg"></p>
-<p class="fa fa-star fa-lg"></p>
-<p class="fa fa-star-o fa-lg"></p>
-<p class="fa fa-star-o fa-lg"></p>
+<p class="fa fa-star fa-lg" style="text-align:right"></p>
+<p class="fa fa-star fa-lg" style="text-align:right"></p>
+<p class="fa fa-star fa-lg" style="text-align:right"></p>
+<p class="fa fa-star-o fa-lg" style="text-align:right"></p>
+<p class="fa fa-star-o fa-lg" style="text-align:right"></p>
 <br>
-<p class="fa fa-star fa-lg"></p>
-<p class="fa fa-star fa-lg"></p>
-<p class="fa fa-star fa-lg"></p>
-<p class="fa fa-star-o fa-lg"></p>
-<p class="fa fa-star-o fa-lg"></p>
+<p class="fa fa-star fa-lg" style="text-align:right"></p>
+<p class="fa fa-star fa-lg" style="text-align:right"></p>
+<p class="fa fa-star fa-lg" style="text-align:right"></p>
+<p class="fa fa-star-o fa-lg" style="text-align:right"></p>
+<p class="fa fa-star-o fa-lg" style="text-align:right"></p>
 :::
 ::::
 
@@ -221,7 +221,7 @@ layout: default
 Classification/Regression Trees, Deep learning, Support Vector Machines, Naive Bayes, K-nearest neighbors, Linear/Quadratic Discriminant Analysis, K-Means, Agglomerative Clustering, Regularization, Principal Component Analysis,  Random Forests, Kernel Density Estimation, and SARIMA
 
 #### Other Tools  
-Exposure to Hadoop, Databricks, and h2o
+Exposure to Hadoop, Databricks, h2o, and TensorFlow
 
 ***
 
