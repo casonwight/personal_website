@@ -14,7 +14,7 @@ Research is shown with the most recent projects first. Some of these projects ar
 Description
 :::
 ::: {.col-md-11}
-Semi-Markov processes effectively model waiting times and probabilities for many multi-state scenarios.  In practice, data are collected at specific points in time where the stage of a process is observed at regular intervals. Intermittently observed measurements such as these are known as *panel data*. This project estimates the parameters of a semi-Markov model with panel data. The state-of-the-art technique (proposed by [Aralis and Brookmeyer](https://journals.sagepub.com/doi/full/10.1177/0962280217736342)) uses the stochastic expectation-maximization (SEM) algorithm for inference. One setback to this method is the large computational burden of the sampling process. Our goal is to improve upon this method by adjusting the expectation step to avoid such sampling. Key skills in this project include semi-Markov modeling and distributional truncation.
+Semi-Markov processes effectively model waiting times and probabilities for many multi-state scenarios.  In practice, data are collected at specific points in time where the stage of a process is observed at regular intervals. Intermittently observed measurements such as these are known as *panel data*. This project estimates the parameters of a semi-Markov model with panel data. The state-of-the-art technique (proposed by <a href="https://journals.sagepub.com/doi/full/10.1177/0962280217736342" target="_blank">Aralis and Brookmeyer</a>) uses the stochastic expectation-maximization (SEM) algorithm for inference. One setback to this method is the large computational burden of the sampling process. Our goal is to improve upon this method by adjusting the expectation step to avoid such sampling. Key skills in this project include semi-Markov modeling and distributional truncation.
 :::
 ::::
 
@@ -52,7 +52,7 @@ This project is also in collaboration with the Society of Actuaries (SOA), Dr. B
 Publication Link
 :::
 ::: {.col-md-11}
-[*Methodology and Computing in Applied Probability*](https://link.springer.com/article/10.1007/s11009-019-09739-z)
+<a href="https://link.springer.com/article/10.1007/s11009-019-09739-z" target="_blank">*Methodology and Computing in Applied Probability*</a>
 :::
 ::::
 
@@ -70,7 +70,7 @@ The Laplace transform or moment-generating function of a distribution is not alw
 Outcome
 :::
 ::: {.col-md-11}
-This project was mentored and coauthored by Dr. Richard Warr. The paper was published by [*Methodology and Computing in Applied Probability*](https://link.springer.com/article/10.1007/s11009-019-09739-z) in 2020. I presented this project at BYU's 2018 physical and mathematical Spring Research Conference, winning first place in the session.
+This project was mentored and coauthored by Dr. Richard Warr. The paper was published by <a href="https://link.springer.com/article/10.1007/s11009-019-09739-z" target="_blank">*Methodology and Computing in Applied Probability*</a> in 2020. I presented this project at BYU's 2018 physical and mathematical Spring Research Conference, winning first place in the session.
 :::
 ::::
 
@@ -78,10 +78,10 @@ This project was mentored and coauthored by Dr. Richard Warr. The paper was publ
 ###  Auto Loss Cost Trends  
 :::: {.col-md-12}
 ::: {.col-md-1}
-Publication Link
+Publication Links
 :::
 ::: {.col-md-11}
-[Casualty Actuarial Society](https://www.casact.org/press/index.cfm?fa=viewArticle&articleID=4174) and [Society of Actuaries](https://www.soa.org/resources/research-reports/2018/auto-loss-cost-trends/)
+<a href="https://www.casact.org/press/index.cfm?fa=viewArticle&articleID=4174" target="_blank">Casualty Actuarial Society</a> and <a href="https://www.soa.org/resources/research-reports/2018/auto-loss-cost-trends/" target="_blank">Society of Actuaries</a>
 :::
 ::::
 
@@ -99,17 +99,17 @@ The purpose of this research is to explore the key drivers of automobile claim s
 Outcome
 :::
 ::: {.col-md-11}
-This undergraduate research project was in collaboration with Dr. Brian Hartman, the Society of Actuaries (SOA), the Casualty Actuarial Society (CAS), and a few other undergraduate students. A paper was published through the [CAS](https://www.casact.org/press/index.cfm?fa=viewArticle&articleID=4174) and [SOA](https://www.soa.org/resources/research-reports/2018/auto-loss-cost-trends/) in 2018. I presented the research, along with three other students, at the [CAS annual meeting](https://www.pathlms.com/cas/events/1380) in November, 2018. The [*Research Insights*](https://www.stitcher.com/show/research-insights-a-society-of-actuaries-podcast/episode/research-insights-auto-loss-cost-trends-55030097) podcast featured this project in an episode as well.
+This undergraduate research project was in collaboration with Dr. Brian Hartman, the Society of Actuaries (SOA), the Casualty Actuarial Society (CAS), and a few other undergraduate students. A paper was published through the <a href="https://www.casact.org/press/index.cfm?fa=viewArticle&articleID=4174" target="_blank">CAS</a> and <a href="https://www.soa.org/resources/research-reports/2018/auto-loss-cost-trends/" target="_blank">SOA</a> in 2018. I presented the research, along with three other students, at the <a href="https://www.pathlms.com/cas/events/1380" target="_blank">CAS annual meeting</a> in November, 2018. The <a href="https://www.stitcher.com/show/research-insights-a-society-of-actuaries-podcast/episode/research-insights-auto-loss-cost-trends-55030097" target="_blank">*Research Insights*</a> podcast featured this project in an episode as well.
 :::
 ::::
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   
 <p style="text-align: center;">
-    <a href="mailto:cason.wight@gmail.com?subject = Feedback&body = Message" class="fa fa-send fa-lg fa-fw"></a>
-    <a href="https://www.linkedin.com/in/casonwight/" class="fa fa-linkedin fa-lg fa-fw"></a>
-    <a href="https://github.com/casonwight" class="fa fa-github fa-lg fa-fw"></a>
+    <a href="mailto:cason.wight@gmail.com?subject = Feedback&body = Message" target="_blank" class="fa fa-send fa-lg fa-fw"></a>
+    <a href="https://www.linkedin.com/in/casonwight/" target="_blank" class="fa fa-linkedin fa-lg fa-fw"></a>
+    <a href="https://github.com/casonwight" target="_blank" class="fa fa-github fa-lg fa-fw"></a>
 </p>
 
-<a href="Resume 2020.pdf" download><p style="text-align:center">Download my Resume</p></a>
+<a href="Resume 2020.pdf" download target="_blank"><p style="text-align:center">Download my Resume</p></a>
 <p style="text-align:center; font-size:75%; color:grey">Made by Cason Wight</p>
