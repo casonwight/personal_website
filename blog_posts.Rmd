@@ -6,11 +6,11 @@ output:
       in_header: "favicon.html" 
 ---
 
-:::: {.columns}
-::: {.column width="40%"}
+:::: {.col-md-12}
+::: {.col-md-5}
 ![](Portfolio Images/Bid_Price.png){width=95%}
 :::
-::: {.column width="60%"}
+::: {.col-md-7}
 <br>
 <br>
 <a href = "https://medium.com/xandr-tech/floor-price-for-first-price-auctions-e6e66c966451"><p style="font-size:large; margin-bottom:0">Floor Price Algorithm in Ad Auctions</p></a>
@@ -19,11 +19,11 @@ output:
 :::
 ::::
 
-:::: {.columns}
-::: {.column width="40%"}
+:::: {.col-md-12}
+::: {.col-md-5}
 ![](Portfolio Images/infection.gif){width=95%}
 :::
-::: {.column width="60%"}
+::: {.col-md-7}
 <br>
 <br>
 <a href = "https://statexchange.netlify.app/2020/04/02/infection-spread/"><p style="font-size:large; margin-bottom:0">Simulating Infection Spread</p></a>
@@ -32,11 +32,11 @@ output:
 :::
 ::::
 
-:::: {.columns}
-::: {.column width="40%"}
+:::: {.col-md-12}
+::: {.col-md-5}
 ![](Portfolio Images/Bootstrap.png){width=95%}
 :::
-::: {.column width="60%"}
+::: {.col-md-7}
 <br>
 <br>
 <a href = "https://statexchange.netlify.app/2020/03/05/bootstrapping/"><p style="font-size:large; margin-bottom:0">Bootstrapping</p></a>

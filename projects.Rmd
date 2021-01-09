@@ -6,11 +6,11 @@ output:
       in_header: "favicon.html" 
 ---
 
-:::: {.columns}
-::: {.column width="40%"}
+:::: {.col-md-12}
+::: {.col-md-5}
 ![](Portfolio Images/Games_Won.png){width=95%}
 :::
-::: {.column width="60%"}
+::: {.col-md-7}
 <br>
 <a href="Stat 651 Project/Project Report.pdf" download><p style="font-size:large; margin-bottom:0">Impact of Covid on NFL Attendance (Bayesian Time Series)</p></a>
 <p style="margin-bottom:0">**Code:** <a href="Stat 651 Project/Analysis Code.Rmd" download>Analysis (.Rmd)</a> | <a href="Stat 651 Project/final_stan.stan" download>Model (.stan)</a></p>
@@ -20,11 +20,11 @@ output:
 ::::
 
 
-:::: {.columns}
-::: {.column width="40%"}
+:::: {.col-md-12}
+::: {.col-md-5}
 ![](Portfolio Images/general-conference.gif){width=95%}
 :::
-::: {.column width="60%"}
+::: {.col-md-7}
 <br>
 <a href="Stat 666 Project/Project Report.pdf" download><p style="font-size:large; margin-bottom:0">Predicting BYU Speech Authorship (Natural Language Processing)</p></a>
 <p style="margin-bottom:0">**Code:** <a href="Stat 666 Project/clean_analysis.py" download>Analysis (.py)</a> | <a href="Stat 666 Project/EDA.py" download>Exploratory Data Analysis (.py)</a></p>
@@ -33,11 +33,11 @@ output:
 :::
 ::::
 
-:::: {.columns}
-::: {.column width="40%"}
+:::: {.col-md-12}
+::: {.col-md-5}
 ![](Portfolio Images/lodgepole.png){width=95%}
 :::
-::: {.column width="60%"}
+::: {.col-md-7}
 <br>
 <a href="Stat 536 Lodgepole Project/Project Report.pdf" download><p style="font-size:large; margin-bottom:0">Lodgepole Pine Growth in the High Uintas (Nonlinear Regression with Spatial Correlation)</p></a>
 <p style="margin-bottom:0">**Code:** <a href="Stat 536 Lodgepole Project/forest.r" download>Analysis (.R)</a></p>
@@ -46,11 +46,11 @@ output:
 :::
 ::::
 
-:::: {.columns}
-::: {.column width="40%"}
+:::: {.col-md-12}
+::: {.col-md-5}
 ![](Portfolio Images/Credit.png){width=95%}
 :::
-::: {.column width="60%"}
+::: {.col-md-7}
 <br>
 <a href="Stat 536 Credit Project/Project Report.pdf" download><p style="font-size:large; margin-bottom:0">Credit Card Fraud Detection (Various ML Methods)</p></a>
 <p style="margin-bottom:0">**Code:** <a href="Stat 536 Credit Project/CreditFraud.py" download>Analysis (.py)</a> | <a href="Stat 536 Credit Project/Boxplots.R" download>Exploratory Data Analysis (.R)</a></p>
@@ -61,10 +61,10 @@ output:
 ::::
 
 :::: {.columns}
-::: {.column width="40%"}
+::: {.col-md-5}
 ![](Portfolio Images/linear_models.png){width=95%}
 :::
-::: {.column width="60%"}
+::: {.col-md-7}
 <br>
 <a href="Stat 535 Project/Project Report.pdf" download><p style="font-size:large; margin-bottom:0">Examples of Linear Modeling</p></a>
 <p style="margin-bottom:0">**Code:** <a href="Stat 666 Project/Application Portfolio.Rmd" download>Analysis (.Rmd)</a></p>
