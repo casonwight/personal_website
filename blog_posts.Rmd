@@ -7,18 +7,18 @@ output:
 ---
 
 :::: {.col-md-12}
-::: {.col-md-5}
+::: {.col-md-5 style="height:200px"}
 <div style="height:200px; position:relative">
-<div style="margin: 0; position: absolute;
+<div style="margin: 0; position: relative;
   top: 50%; -ms-transform: translateY(-50%);
   transform: translateY(-50%);">
 <a href="https://medium.com/xandr-tech/floor-price-for-first-price-auctions-e6e66c966451">![](Portfolio Images/Bid_Price.png){width=95%}</a>
 </div>
 </div>
 :::
-::: {.col-md-7}
+::: {.col-md-7 style="height:200px"}
 <div style="height:200px; position:relative">
-<div style="margin: 0; position: absolute;
+<div style="margin: 0; position: relative;
   top: 50%; -ms-transform: translateY(-50%);
   transform: translateY(-50%);">
 <a href = "https://medium.com/xandr-tech/floor-price-for-first-price-auctions-e6e66c966451"><p style="font-size:large; margin-bottom:0">Floor Price Algorithm in Ad Auctions</p></a>
@@ -30,18 +30,18 @@ output:
 ::::
 
 :::: {.col-md-12}
-::: {.col-md-5}
+::: {.col-md-5 style="height:200px"}
 <div style="height:200px; position:relative">
-<div style="margin: 0; position: absolute;
+<div style="margin: 0; position: relative;
   top: 50%; -ms-transform: translateY(-50%);
   transform: translateY(-50%);">
 <a href="https://statexchange.netlify.app/2020/04/02/infection-spread/">![](Portfolio Images/infection.gif){width=95%}</a>
 </div>
 </div>
 :::
-::: {.col-md-7}
+::: {.col-md-7 style="height:200px"}
 <div style="height:200px; position:relative">
-<div style="margin: 0; position: absolute;
+<div style="margin: 0; position: relative;
   top: 50%; -ms-transform: translateY(-50%);
   transform: translateY(-50%);">
 <a href = "https://statexchange.netlify.app/2020/04/02/infection-spread/"><p style="font-size:large; margin-bottom:0">Simulating Infection Spread</p></a>
@@ -53,18 +53,18 @@ output:
 ::::
 
 :::: {.col-md-12}
-::: {.col-md-5}
+::: {.col-md-5 style="height:200px"}
 <div style="height:200px; position:relative">
-<div style="margin: 0; position: absolute;
+<div style="margin: 0; position: relative;
   top: 50%; -ms-transform: translateY(-50%);
   transform: translateY(-50%);">
 <a href="https://statexchange.netlify.app/2020/03/05/bootstrapping/">![](Portfolio Images/Bootstrap.png){width=95%}</a>
 </div>
 </div>
 :::
-::: {.col-md-7}
+::: {.col-md-7 style="height:200px"}
 <div style="height:200px; position:relative">
-<div style="margin: 0; position: absolute;
+<div style="margin: 0; position: relative;
   top: 50%; -ms-transform: translateY(-50%);
   transform: translateY(-50%);">
 <a href = "https://statexchange.netlify.app/2020/03/05/bootstrapping/"><p style="font-size:large; margin-bottom:0">Bootstrapping</p></a>

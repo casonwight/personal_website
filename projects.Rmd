@@ -6,19 +6,19 @@ output:
       in_header: "favicon.html" 
 ---
   
-:::: {.col-md-12 style="height:200px"}
-::: {.col-md-5}
+:::: {.col-md-12}
+::: {.col-md-5 style="height:200px"}
 <div style="height:200px; position:relative">
-<div style="margin: 0; position: absolute;
+<div style="margin: 0; position: relative;
   top: 50%; -ms-transform: translateY(-50%);
   transform: translateY(-50%);">
 <a href="Stat 651 Project/Project Report.pdf" download  target="_blank">![](Portfolio Images/Games_Won.png){width=95%}</a>
 </div>
 </div>
 :::
-::: {.col-md-7}
+::: {.col-md-7 style="height:200px"}
 <div style="height:200px; position:relative">
-<div style="margin: 0; position: absolute;
+<div style="margin: 0; position: relative;
   top: 50%; -ms-transform: translateY(-50%);
   transform: translateY(-50%);">
 <a href="Stat 651 Project/Project Report.pdf" download target="_blank"><p style="font-size:large; margin-bottom:0">Impact of Covid on NFL Attendance (Bayesian Time Series)</p></a>
@@ -30,19 +30,19 @@ output:
 :::
 ::::
 
-:::: {.col-md-12 style="height:200px"}
-::: {.col-md-5}
+:::: {.col-md-12}
+::: {.col-md-5 style="height:200px"}
 <div style="height:200px; position:relative">
-<div style="margin: 0; position: absolute;
+<div style="margin: 0; position: relative;
   top: 50%; -ms-transform: translateY(-50%);
   transform: translateY(-50%);">
 <a href="Stat 666 Project/Project Report.pdf" download>![](Portfolio Images/general-conference.gif){width=95%}</a>
 </div>
 </div>
 :::
-::: {.col-md-7}
+::: {.col-md-7 style="height:200px"}
 <div style="height:200px; position:relative">
-<div style="margin: 0; position: absolute;
+<div style="margin: 0; position: relative;
   top: 50%; -ms-transform: translateY(-50%);
   transform: translateY(-50%);">
 <a href="Stat 666 Project/Project Report.pdf" download><p style="font-size:large; margin-bottom:0">Predicting BYU Speech Authorship (Natural Language Processing)</p></a>
@@ -54,19 +54,19 @@ output:
 :::
 ::::
 
-:::: {.col-md-12 style="height:200px"}
-::: {.col-md-5}
+:::: {.col-md-12}
+::: {.col-md-5 style="height:200px"}
 <div style="height:200px; position:relative">
-<div style="margin: 0; position: absolute;
+<div style="margin: 0; position: relative;
   top: 50%; -ms-transform: translateY(-50%);
   transform: translateY(-50%);">
 <a href="Stat 536 Lodgepole Project/Project Report.pdf" download>![](Portfolio Images/lodgepole.png){width=95%}</a>
 </div>
 </div>
 :::
-::: {.col-md-7}
+::: {.col-md-7 style="height:200px"}
 <div style="height:200px; position:relative">
-<div style="margin: 0; position: absolute;
+<div style="margin: 0; position: relative;
   top: 50%; -ms-transform: translateY(-50%);
   transform: translateY(-50%);">
 <a href="Stat 536 Lodgepole Project/Project Report.pdf" download><p style="font-size:large; margin-bottom:0">Lodgepole Pine Growth in the High Uintas (Nonlinear Regression with Spatial Correlation)</p></a>
@@ -78,19 +78,19 @@ output:
 :::
 ::::
 
-:::: {.col-md-12 style="height:200px"}
-::: {.col-md-5}
+:::: {.col-md-12}
+::: {.col-md-5 style="height:200px"}
 <div style="height:200px; position:relative">
-<div style="margin: 0; position: absolute;
+<div style="margin: 0; position: relative;
   top: 50%; -ms-transform: translateY(-50%);
   transform: translateY(-50%);">
 <a href="Stat 536 Credit Project/Project Report.pdf" download>![](Portfolio Images/Credit.png){width=95%}</a>
 </div>
 </div>
 :::
-::: {.col-md-7}
+::: {.col-md-7 style="height:200px"}
 <div style="height:200px; position:relative">
-<div style="margin: 0; position: absolute;
+<div style="margin: 0; position: relative;
   top: 50%; -ms-transform: translateY(-50%);
   transform: translateY(-50%);">
 <a href="Stat 536 Credit Project/Project Report.pdf" download><p style="font-size:large; margin-bottom:0">Credit Card Fraud Detection (Various ML Methods)</p></a>
@@ -103,19 +103,19 @@ output:
 :::
 ::::
 
-:::: {.col-md-12 style="height:200px"}
-::: {.col-md-5}
+:::: {.col-md-12}
+::: {.col-md-5 style="height:200px"}
 <div style="height:200px; position:relative">
-<div style="margin: 0; position: absolute;
+<div style="margin: 0; position: relative;
   top: 50%; -ms-transform: translateY(-50%);
   transform: translateY(-50%);">
 <a href="Stat 535 Project/Project Report.pdf" download>![](Portfolio Images/linear_models.png){width=95%}</a>
 </div>
 </div>
 :::
-::: {.col-md-7}
+::: {.col-md-7 style="height:200px"}
 <div style="height:200px; position:relative">
-<div style="margin: 0; position: absolute;
+<div style="margin: 0; position: relative;
   top: 50%; -ms-transform: translateY(-50%);
   transform: translateY(-50%);">
 <a href="Stat 535 Project/Project Report.pdf" download><p style="font-size:large; margin-bottom:0">Examples of Linear Modeling</p></a>
