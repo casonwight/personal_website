@@ -6,11 +6,6 @@ output:
       in_header: "favicon.html" 
 ---
 
-### This page is still in progress; a few more projects are yet to be added  
-
-The projects included are from personal interest, school asignments, or internships. The blog posts either summarize results or demonstrate a concept. The personal projects include code and other details.
-
-##  Personal Projects  
 :::: {.columns}
 ::: {.column width="40%"}
 ![](Portfolio Images/Games_Won.png){width=95%}
@@ -38,46 +33,46 @@ The projects included are from personal interest, school asignments, or internsh
 :::
 ::::
 
-##  Blog Posts   
-
 :::: {.columns}
 ::: {.column width="40%"}
-![](Portfolio Images/Bid_Price.png){width=95%}
+![](Portfolio Images/lodgepole.png){width=95%}
 :::
 ::: {.column width="60%"}
 <br>
-<br>
-<a href = "https://medium.com/xandr-tech/floor-price-for-first-price-auctions-e6e66c966451"><p style="font-size:large; margin-bottom:0">Floor Price Algorithm in Ad Auctions</p></a>
-**Medium**  
-*Oct 23, 2020* 
+<a href="Stat 536 Lodgepole Project/Project Report.pdf" download><p style="font-size:large; margin-bottom:0">Lodgepole Pine Growth in the High Uintas (Nonlinear Regression with Spatial Correlation)</p></a>
+<p style="margin-bottom:0">**Code:** <a href="Stat 536 Lodgepole Project/forest.r" download>Analysis (.R)</a></p>
+<p style="margin-bottom:0">**Other Resources:** <a href="Stat 536 Lodgepole Project/LodgepoleInUintas.csv" download>Data (.csv)</a> | <a href="Stat 536 Lodgepole Project/predictgls.R" download>Predict GLS Function (.R)</a> | <a href="Stat 536 Lodgepole Project/stdres.gls.R" download>Standardized Residuals GLS Function (.R)</a></p>
+*Mar 11, 2020*
 :::
 ::::
 
 :::: {.columns}
 ::: {.column width="40%"}
-![](Portfolio Images/infection.gif){width=95%}
+![](Portfolio Images/Credit.png){width=95%}
 :::
 ::: {.column width="60%"}
 <br>
-<br>
-<a href = "https://statexchange.netlify.app/2020/04/02/infection-spread/"><p style="font-size:large; margin-bottom:0">Simulating Infection Spread</p></a>
-**Statexchange** (personal blog, in progress)  
-*Apr 2, 2020* 
+<a href="Stat 536 Credit Project/Project Report.pdf" download><p style="font-size:large; margin-bottom:0">Credit Card Fraud Detection (Various ML Methods)</p></a>
+<p style="margin-bottom:0">**Code:** <a href="Stat 536 Credit Project/CreditFraud.py" download>Analysis (.py)</a> | <a href="Stat 536 Credit Project/Boxplots.R" download>Exploratory Data Analysis (.R)</a></p>
+<p style="margin-bottom:0">**Other Resources:** <a href="https://www.kaggle.com/mlg-ulb/creditcardfraud/home" download>Data (.csv)</a> | <a href="Stat 536 Credit Project/probs_knn.csv" download>KNN Predicted Probabilities (.csv)</a> | <a href="Stat 536 Credit Project/pred_probs.csv" download>Classification Tree Predicted Probabilities (.csv)</a></p>
+<a href="Stat 536 Credit Project/Project Report.pdf" download><p style="margin-bottom:0">Slides</p></a>
+*Apr 8, 2020*
 :::
 ::::
 
 :::: {.columns}
 ::: {.column width="40%"}
-![](Portfolio Images/Bootstrap.png){width=95%}
+![](Portfolio Images/linear_models.png){width=95%}
 :::
 ::: {.column width="60%"}
 <br>
-<br>
-<a href = "https://statexchange.netlify.app/2020/03/05/bootstrapping/"><p style="font-size:large; margin-bottom:0">Bootstrapping</p></a>
-**Statexchange** (personal blog, in progress)  
-*Mar 5, 2020* 
+<a href="Stat 535 Project/Project Report.pdf" download><p style="font-size:large; margin-bottom:0">Examples of Linear Modeling</p></a>
+<p style="margin-bottom:0">**Code:** <a href="Stat 666 Project/Application Portfolio.Rmd" download>Analysis (.Rmd)</a></p>
+<p style="margin-bottom:0">**Other Resources:** <a href="Stat 535 Project/fires.csv" download>Fire Data (.csv)</a> | <a href="Stat 535 Project/HotChocolate.csv" download>Hot Chocolate Data (.csv)</a> | <a href="Stat 535 Project/grades.csv" download>Grades Data (.csv)</a> | <a href="Stat 535 Project/MyTemplate.docx" download>Word Template (.docx)</a></p>
+*Nov 15, 2019*
 :::
 ::::
+
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   

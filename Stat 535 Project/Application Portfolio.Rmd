@@ -1,0 +1,967 @@
+---
+title: "Linear Models"
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output:
+  word_document:
+    reference_docx: MyTemplate.docx
+  html_document:
+    df_print: paged
+  pdf_document: default
+subtitle: Cason Wight
+---
+
+```{r setup, include = FALSE}
+library(knitr)
+library(gplots)
+library(ggplot2)
+knitr::opts_chunk$set(fig.width=5, fig.height=3.5)
+par(mfrow=c(1,1),mar=c(0,0,0,0), oma=c(0,0,0,0))
+```
+
+This project is intended as a portfolio of simple applications of linear models under a few different scenarios, with data chosen by me. A linear model is always of the form $\mathbf{y=x\beta+\epsilon}$. Each application is a special case of this form of model. The five sections of this report include the following analyses:
+
+* SRS Mean
+* Two Means
+* One Factor Experiment
+* Two-Factor Experiment
+* One-Factor Analysis of Covariance
+ 
+For each of the above, this project provides an application description, data details, and an analysis in R. Each step is includes a brief explanation of methods and results, and why each is an example of $\mathbf{y=x\beta+\epsilon}$.
+
+  
+## SRS Mean  
+  
+A simple random sample (SRS) is a set of random draws from a popuulation of interest. The population has a true mean and true variance. Using the random sample, the mean can be estimated, along with a $95$% confidence interval for the true mean using a $t$-test. 
+
+### Application Description  
+
+The first data analysis will be of fire damage data in my hometown. I am from Washington County, Oregon (just outside of Portland). In the last few years, fires have been a big concern in the Pacific Northwest. The wildfires in Oregon and California have become infamous. Last year a wildfire in Oregon disrupted my family's planned white-water rafting trip. 
+
+According to [oregon live](https://www.oregonlive.com/wildfires/2018/10/oregon_wildfire_costs_hit_reco.html), "the cost of fighting wildfires in Oregon reached an all-time high [of] $514.6$ million in $2018$." [Statesman Journal](https://www.statesmanjournal.com/story/news/2018/10/10/oregon-wildfire-costs-hit-record-high-2018/1581132002/) reports over $1,800$ fires, totaling $846,000$ acres during that time. One fire in Klondike affected over 160,000 acres. I am curious as to what the true mean damage (as defined by total acres affected) by fires is in my hometown, along with other inference on that sample. 
+
+### Data Details  
+
+From the Oregon Department of Forestry's (ODF's) website, [odf.oregon.gov](https://apps.odf.oregon.gov/DIVISIONS/protection/fire_protection/fires/FIRESlist.asp), I obtained a list of all fires in Washington County reported to the ODF since $1960$. This data includes a column called "Total Acres" that reports how many acres were affected by each fire. A few adjustments were required for the data before analysis, due to two issues.
+
+First, $67$ of the $770$ reported fires either have a reported $0$ acres of damage or a blank value. For my analysis, I do not want to look at the reported fires with no damage, because most fires with no damage probably go unreported anyway. Thus, all of these observations are removed. 
+
+The other adjustment that was required was a log transformation on the acres damaged in each fire. This is because a $t$-test on this SRS requires the assumption of normality in the samples. The actual data clearly does not follow this assumption, and a log transformation helps. These two adjustments are labeled in the comments throughout the code.
+
+These observations are reported by the Oregon Department of Forestry. Their website does not provide many details on the data collection, but I assume that every reported fire is included in the data. The following is a boxplot of the data (acres of fire damage).
+
+```{r SRSMeanDataEntry, echo = FALSE}
+# Reading in the data
+fire <- read.csv("C:/Users/cason/Desktop/Classes/Old Classes/Assignments/Stat 535/Application Portfolio/fires.csv", header = TRUE)$Total.Acres
+```
+
+```{r SRSMeanData2, echo = FALSE}
+# Exclude missing or zero-damage fires
+fire <- fire[!fire%in%c(NA,0)]
+
+# Boxplot of raw fire sizes
+boxplot(fire, main = "Boxplot of Fire Damage", ylab = "Acres of Fire Damage")
+```
+
+This boxplot is heavily right-skewed. This may be because non-positive values are not included in this type of data and smaller fires are significantly more likely than bigger fires. This glance at the boxplot shows that the data are not normally distributed, which is an assumption of a SRS analysis. Quantile-quantile plots give a more detailed look into the normality of a dataset. The following is a quantile plot for the fire data.
+
+```{r SRSMeanQQplot, echo = FALSE}
+# Quantile-Quantile Plot on data
+qqnorm(fire)
+qqline(fire)
+```
+
+A look at the quantile plot confirms that the data is not normally distributed. Normally distributed data would approximately follow the line included in the quantile plot. A transformation on this data will be necessary for this analysis. Summary statistics of the untransformed data are included below.
+
+```{r SRSMeanSummStats, echo = FALSE}
+# Summary statistics of fire damage
+kable(t(c(summary(fire), "Std. Dev."=sd(fire))),digits=2, caption = "Summary Statistics of Acres")
+```
+
+According to the summary statistics shown in the table, the maximum damage from a fire reported in Washington county is `r max(fire)` acres, and the minimum is `r min(fire)` acres. Half of the reported fires caused between `r quantile(fire,.25)` and `r quantile(fire,.75)` acres of damage. 
+
+To address the heavy skew and non-normality of this data, a log transformation is peformed. The following shows the effects of this transformation on the assumption of normality (through a boxplot and a quantile plot).
+
+```{r SRSMeanQQTrans, echo = FALSE, fig.width = 6.5}
+# Log transformation
+logFire <- log(fire)
+
+# Boxplot and QQplot
+par(mfrow=c(1,2))
+boxplot(logFire, main = "Boxplot of Fire Damage", ylab = "log(Acres) of Fire Damage")
+qqnorm(logFire)
+qqline(logFire)
+par(mfrow=c(1,1))
+```
+
+The log transformation helps the data fit the normality assumption much better. Although there appears to be some kind of discrete nature to these reports (which is impossible with normally distributed data), the log of the damage (in acreage) appears to be much closer to normally distributed, but less so in the tails. The transformation certainly helps reduce the skew from the original data. We will proceed with an analysis on these transformed data.
+
+
+### Analysis  
+
+Now that the data have been transformed, an analysis is performed on this SRS. First a $t$-test model is fit: $Y_i=\mu+\epsilon_i,\quad\epsilon_i\sim N(0,\sigma^2)$
+Using this model, an estimate for the true mean (log-transformed) acres of damage by a fire is calculated along with the 95% confidence interval for this true mean.
+
+```{r SRSMeanAnalysis, echo = FALSE}
+# Fit t test
+out.fire <- t.test(logFire,conf.level = .95)
+
+# Untransformed estimates are reported
+estimates <- c("Estimate"=as.numeric(exp(out.fire$estimate)),"Lower"=exp(out.fire$conf.int)[1],"Upper"=exp(out.fire$conf.int)[2])
+kable(t(estimates),caption = "Estimated Avg. Damage (Acres)", digits = 4)
+```
+
+The estimated true mean fire damage (in acres) for a fire in Washington County is $`r round(estimates[1],3)`$ acres, with a $95%$ confidence interval of $`r round(estimates[2],3)`$ to $`r round(estimates[3],3)`$. This estimate is surprising to me. I expected the average damage to be a lot bigger, based on what I had heard.
+  
+### Example of a Linear Model  
+
+This case is an example of $\mathbf{Y=X\beta+\epsilon}$, with
+$$\begin{align}
+\mathbf{Y}&= \mathbf{X\beta} + \mathbf{\epsilon} \\
+\left[\begin{matrix}
+\ln{y_1} \\
+\ln{y_2} \\
+\vdots \\
+\ln{y_n} 
+\end{matrix}\right]&=\left[\begin{matrix}
+1 \\
+1 \\
+\vdots \\
+1
+\end{matrix}\right]\left[\begin{matrix}
+\mu
+\end{matrix}\right] + \left[\begin{matrix}
+\epsilon_1 \\
+\epsilon_2 \\
+\vdots \\
+\epsilon_n
+\end{matrix}\right],\quad where\quad \epsilon_i\sim N(0,\sigma^2)
+\end{align}$$
+
+Although this example includes a log transformation, it is still an example of a linear model. The $\mathbf{X}$ matrix is simply a column of $1$s. $\mathbf{\beta}$ is a $1\times1$ matrix with the true mean $\mu$. The $\mathbf{Y}$ matrix is the recorded log(acres) of damage from the data, which has $n$ observations. The $\mathbf{\epsilon}$ matrix is an $n\times1$ matrix of normally distributed error, centered on $0$, with $\sigma^2$ variance. 
+
+The main results of this SRS is that the true mean acres of damage in Washington County, Oregon, is roughly $`r round(estimates[1],2)`$ acres. 
+
+## Two Means  
+  
+A two means analysis compares two groups and tests the hypothesis that the true means of the groups are significantly different from each other. This test assumes that the samples from these two groups are normally distributed and that the two groups have equal (or at least similar) variance. 
+  
+### Application Description  
+
+Wrestling has always been a fun sport for me to view and participate in. Unfortunately, college wrestling is not as popular as other college sports. Many universities (like BYU) do not have a team. When I watch, I like to follow a specific team, especially in tournaments. Simply watching hundreds of wrestlers across multiple teams is far less exciting than having a specific team to follow. Because BYU does not have a team, I typically follow Utah Valley University (UVU) or Oregon State University (OSU).
+  
+Last year, I watched a few duels at UVU. It was frustrating to root for a losing team, especially one that I didn't know too well. This year, I want to watch the Reno Tournament of Champions (TOC) on December 15. I want to follow the "better" team of UVU and OSU, based on last year's performance at the same tournament. 
+
+I will analyze the team points earned or lost for each match of UVU wrestlers from last year's TOC, and compare that to the same for all of the OSU matches. By performing a two means analysis, I will be able to know which wrestlers' matches would have been more "exciting" to follow at last year's tournament between the two teams. This way, I may have a better idea of who to follow this year, if a "better" team exists. 
+
+### Data Details  
+
+The data is from [trackwrestling.com](https://www.trackwrestling.com/tw/seasons/MainFrame.jsp?TIM=1571150804010&twSessionId=qaxpdwuvak&loadBalanced=true), selecting "Oregon State University" and "Utah Valley University" as the teams, and "Reno Tournament of Champions" from the event listing of both schools. The point system for wrestling matches are as follows:  
+
+* 6 points for a pin, forfeit, or disqualification
+* 5 points for a technical fall (15 point lead)
+* 4 points for a major decision (8-14 point lead)
+* 3 points for a decision (1-8 point lead)
+
+The scores reported in this data set include the total points won and given up in each match of all the wrestlers, summed up across the whole tournament. This means that if one wrestler, say Kaylor, has a total score of 9 team points, it means that over the course of the tournament he won a net of 9 points (earned points minus points earned by opponents). Negative scores mean that that wrestler gave up more team points then he earned during the tournament. The smaller the score, the worse the wrestler performed in the tournament and "less exciting" he was to watch.
+
+```{r TwoMeansDataEntry, echo = FALSE}
+# Entering the data from 
+# https://www.trackwrestling.com/tw/seasons/MainFrame.jsp?TIM=1571150804010&twSessionId=qaxpdwuvak&loadBalanced=true
+# for Oregon State
+oregonSt <- read.table(header = TRUE, text = "
+                       Wrestler   TeamPoints
+                       Kaylor     6
+                       Kaylor     -4
+                       Kaylor     4
+                       Kaylor     3
+                       Kaylor     3
+                       Kaylor     -3
+                       Turner     5
+                       Turner     -6
+                       Turner     6
+                       Turner     3
+                       Turner     3
+                       Turner     -5
+                       Allen      -4
+                       Allen      -4
+                       Noonan     -6
+                       Noonan     -3
+                       Meek       -6
+                       Meek       6
+                       Meek       4
+                       Meek       -6
+                       Murphy     -5
+                       Murphy     -6
+                       Beisley    -3
+                       Beisley    -4
+                       Bresser    5
+                       Bresser    -6
+                       Bresser    -6
+                       Dematteo   -4
+                       Dematteo   -3
+                       Mckinney   4
+                       Mckinney   -6
+                       Mckinney   -3
+                       Dixon      3
+                       Dixon      -3
+                       Dixon      -4
+                       Rateb      3
+                       Rateb      3
+                       Rateb      -6
+                       Still      -6
+                       Still      -3
+                       Robertson  -3
+                       Robertson  3
+                       Robertson  -3
+                       ")
+
+# Entering the data for Utah Valley
+utahValley <- read.table(header = TRUE, text = "
+                       Wrestler   TeamPoints
+                       Steward    -6
+                       Steward    -6
+                       Steward    -6
+                       Steward    -6
+                       Gregerson  -3
+                       Gregerson  -3
+                       Delgado    -3
+                       Delgado    -3
+                       Knutzen    3
+                       Knutzen    -3
+                       Knutzen    -6
+                       Haddock    3
+                       Haddock    -6
+                       Haddock    -6
+                       Lofthouse  5
+                       Lofthouse  -6
+                       Lofthouse  -4
+                       Heywood    -5
+                       Heywood    -6
+                       Snelling   -6
+                       Snelling   4
+                       Snelling   5
+                       Snelling   -6
+                       Jantzer    6
+                       Jantzer    -4
+                       Jantzer    -6
+                       Gissel     -6
+                       Gissel     -4
+                       Seely      3
+                       Seely      -4
+                       Seely      -3
+                       Seely      -4
+                       Andrew     3
+                       Andrew     -3
+                       Andrew     3
+                       Andrew     3
+                       Andrew     -4
+                       Trussell   6
+                       Trussell   6
+                       Trussell   -3
+                       Trussell   3
+                       Trussell   6
+                       ")
+
+
+# Total points scored for each wrestler
+oregonStRoster <- aggregate(TeamPoints~Wrestler, data = oregonSt, FUN = sum)
+utahValleyRoster <- aggregate(TeamPoints~Wrestler, data = utahValley, FUN = sum)
+TOC <- rbind(cbind(oregonStRoster,Team="OregonSt"),cbind(utahValleyRoster,Team="UtahValley"))
+```
+
+The data was manually entered from the above-mentioned [website](https://www.trackwrestling.com/tw/seasons/MainFrame.jsp?TIM=1571150804010&twSessionId=qaxpdwuvak&loadBalanced=true). The scores for each match are summed up for each wrestler to give their total score for the tournament. Combining these two sets will give one dataset of all wrestlers from either team, along with their corresponding team and total scored points. 
+
+The following table shows the first few rows of the combined dataset, and the subsequent plot is a boxplot of the net points for each wrestler.
+
+```{r TwoMeansData, echo = FALSE}
+# Glimpse of formatted data
+kable(head(TOC), caption = "First Few Rows of Combined Data Set")
+
+# Boxplots for the two teams
+boxplot(TeamPoints~Team,data=TOC, main = "Wrestler Points by Team", ylab = "TOC Points Earned")
+```
+
+An initial look at the boxplot gives the impression that the two teams did not have too different results last year. The median score and ranges are roughly equal for the two teams. It does look like the points are approximately normally distributed and that the two teams have approximately equal variance. Quantile plots for the two groups will give a better look at the assumption of normality.
+
+```{r TwoMeansQQPLots, echo = FALSE, fig.width=6.5}
+# QQ Plots
+par(mfrow=c(1,2))
+qqnorm(subset(TOC, Team == "UtahValley")$TeamPoints, main  = "Q-Q Plot for UVU")
+qqline(subset(TOC, Team == "UtahValley")$TeamPoints)
+
+qqnorm(subset(TOC, Team == "OregonSt")$TeamPoints, main = "Q-Q Plot for OSU")
+qqline(subset(TOC, Team == "OregonSt")$TeamPoints)
+par(mfrow = c(1,1))
+```
+
+These quantile plots do not bring up any concerns over the normality assumption. Summary statistics on these teams are also reported below, giving a better idea of the center and spread of the teampoints for the two teams at ;ast year's TOC.
+
+```{r TwoMeansSummStats, echo = FALSE}
+# Summary Statistics
+summary.stats <- rbind(c(summary(TOC[TOC$Team=="OregonSt",2]),
+                         "SD"=sd(TOC[TOC$Team=="OregonSt",2])),
+                       c(summary(TOC[TOC$Team=="UtahValley",2]),
+                         "SD"=sd(TOC[TOC$Team=="UtahValley",2])))
+
+rownames(summary.stats) <- c("OregonSt","UtahValley")
+kable(summary.stats[,-c(2,3,5)], digits = 2, caption = "Summary Statistics")
+```
+
+The average team points for the two teams' wrestlers were $`r round(summary.stats[1,4],2)`$ for OSU and $`r round(summary.stats[2,4],2)`$ for UVU. The most team points from any wrestler was $`r max(TOC$TeamPoints)`$ (`r TOC$Wrestler[which.max(TOC$TeamPoints)]` from `r TOC$Team[which.max(TOC$TeamPoints)]`). The fewest from any wrestler was $`r min(TOC$TeamPoints)`$ (`r TOC$Wrestler[which.min(TOC$TeamPoints)]` from `r TOC$Team[which.min(TOC$TeamPoints)]`). The variance of each wrestler's team points was not too different between the two teams.
+
+### Analysis  
+
+An analysis on these data will tell if there is a statistically significant difference between the means of these $2$ groups. First, the model $y_{ij}=\mu_j+\epsilon_i, \epsilon_i\sim N(0,\sigma^2)$ is fit. The estimated difference (along with a $95%$ confidence) of the difference between the two means is determined through a $t$-test and reported in the table below.
+
+```{r TwoMeansAnalysis, echo = FALSE}
+# Fit t test for difference of means
+out.TOC <- t.test(TeamPoints~Team, data=TOC, conf.level=.95, var.equal=TRUE)
+
+# Confidence interval for the true difference
+diff.conf.int <- out.TOC$conf.int[1:2]
+diff.est <- abs(diff(out.TOC$estimate))
+names(diff.est) <- ""
+effects <- c("Estimated Difference"=diff.est, "Lower"=diff.conf.int[1], "Upper"=diff.conf.int[2])
+kable(t(effects), digits = 3, caption = "Estimated Difference of Means")
+```
+
+The estimated difference in mean points scored for a wrestler from either team is `r round(effects[1],3)` ($95%$ CI: `r round(effects[2],3)` to `r round(effects[3],3)`). This means that if I were to pick a random wrestler from OSU and from UVU, I would expect the OSU wrestler to score, on average, `r abs(round(effects[1],3))` more points than the UVU wrestler. However, the $95%$ confidence interval for that estimate includes $0$, which means that there is insufficient evidence to say that this difference is significantly different from $0$. For this year's TOC, there is no clear "better" choice between the two teams for me to watch. 
+
+A barplot shows the means for the $2$ groups and their standard errors. This plot is shown below.
+
+```{r TwoMeansPlot, echo = FALSE}
+# Plot for true means
+plotmeans(TeamPoints~Team,data=TOC, xlab = "Team", p=.99,
+          ylab = "Team Points per Wrestler",
+          main = "Average Team Points", barcol = "firebrick4")
+```
+
+The plot for the two means confirms what was already concluded. The two team points do not give sufficient evidence to say that there is a significant difference between the true mean points earned by wrestlers from UVU and OSU. The $2$ means are well within either's standard error.
+
+
+### Example of a Linear Model  
+
+This case is an example of $\mathbf{Y=X\beta+\epsilon}$, with
+$$\begin{align}
+\mathbf{Y}&=\mathbf{X\beta+\epsilon} \\
+\left[\begin{matrix}
+y_1 \\
+y_2 \\
+\vdots \\
+y_n 
+\end{matrix}\right]&= \left[\begin{matrix}
+1-Z_1 & Z_1 \\
+1-Z_2 & Z_2 \\
+\vdots \\
+1-Z_n & Z_n
+\end{matrix}\right]\left[\begin{matrix}
+\mu_1 \\
+\mu_2
+\end{matrix}\right] + \left[\begin{matrix}
+\epsilon_1 \\
+\epsilon_2 \\
+\vdots \\
+\epsilon_n
+\end{matrix}\right],\quad\text{where}\quad Z_i=
+        \begin{cases}
+            0, & \quad team=OregonState \\
+            1, & \quad team=UtahValley
+        \end{cases}
+\end{align}$$
+
+Each observation (wrestler) is either from OSU or UVU, and never from both. Thus each row should have one $0$ and one $1$, which is how the $\mathbf{X}$ matrix is defined above. Assuming $n=n_1+n_2$, this is a $n\times2$ matrix. The $\mathbf{Y}$ matrix is the observed total tournament points for each wrestler from the data, which has $n=n_1+n_2$ observations. The $\mathbf{\epsilon}$ matrix is an $n\times1$ matrix of normally distributed error, centered on $0$, with $\sigma^2$ variance. The $\mathbf{\beta}$ here is simply the true mean points scored/lost during the TOC for wrestlers from either team, making a $2\times1$ matrix. Each observation has its own normally-distributed error term added on, like in most linear models.
+
+
+## One-Factor Experiment  
+
+An analysis of variance (ANOVA) can be used to analyze a one-factor experiment. These experiments have one dependent variable of interest, with predetermined levels for this factor. The goal is to assess the quantitative effect of being in each predefined "group" of the independent variable on the dependent variable.
+  
+### Application Description  
+
+I do not like working on my computer for long periods of time without listening to something as I work. Most people like listening to music as they work. I like listening to podcasts and other forms of media. Some of my favorite podcasts include Radiolab by NPR, Revisionist History by Malcolm Gladwell, and Making Sense with Sam Harris. 
+
+I have never liked listening to music while working, and I tend to think that it is more distracting than podcasts. I want to test the effects of listening to podcasts or music on my own productivity. Quantifying productivity is rather difficult, so I decided to measure how many characters per minute (CPM) I could accurately type under different conditions (silence, music, and podcasts) instead. For each of the three conditions, I did a $1$-minute typing test to see how many characters I could type.
+
+### Data Details  
+
+This data comes from an experiment I conducted, the layout of which is as follows:
+
+*Response Variable*
+Accurately typed characters per minute (CPM) from a typing test 
+
+*Factor (Levels)*
+Factor: Sound condition (nothing, music, podcast)
+
+*Experimental Unit*
+For each trial, set the sound condition for a few minutes (on headphones), and then perform an online, $1$-minute typing test while maintaining the conditions. The CPM of the test is the result for the observation.
+
+*Replication*
+Each factor level combination had $5$ replicates. 
+
+*Randomization*
+The order of the tests were randomly assigned. Several website provide typing speed tests. I decided to use [livechatinc.com](https://www.livechatinc.com/typing-speed-test/#/), which has a good format. For this experiment, the music I used was from Miike Snow (indie pop), an artist that I like. The podcast that I listened to was NPR's Radiolab. On each observation, I allowed myself to listen for $1$ minute before taking the test to "get into" whatever I was listening to. Each observation of data includes a sound condition (Nothing, Music, or Podcast) and a recorded CPM from a test.
+
+The following is a glimpse at the first few rows of the data and boxplots of the CPM data for the different groups. Quantile plots also are provided to show the normality of the data from the three groups, as in the previous analysis. 
+
+```{r OneFactor, echo = FALSE}
+# Random draws for the order of my tests
+condition <- c("Music","Music","Podcast","Podcast","Nothing","Nothing","Music","Podcast","Nothing",
+               "Nothing","Podcast","Music","Podcast","Music","Nothing")
+cpm <- c(243, 242, 250, 249, 241, 244, 226, 230, 230, 257, 228, 251, 236, 259, 247)
+
+# Relevel the factor based on listening to nothing
+condition <- relevel(as.factor(condition),"Nothing")
+typing <- data.frame("cpm"=cpm,"Condition"=condition)
+```
+
+
+```{r OneFactorBoxplot, echo = FALSE}
+# Glimpse of data
+kable(head(typing), caption = "First Rows of Typing Test Data")
+
+# Boxplot
+boxplot(cpm~condition,data=typing, main = "Boxplot of CPM by Sound Conditions",xlab = "")
+```
+
+```{r OneFactorQQplots, echo = FALSE, fig.width=6.5, fig.height=4}
+## QQ Plots
+par(mfrow=c(2,2),mar=c(3,3,0,1), oma=c(0,0,2.5,0))
+qqnorm(subset(typing, Condition == "Music")[,1], xlab = "", ylab = "", main = "")
+qqline(subset(typing, Condition == "Music")[,1])
+legend("topleft", legend = "Music", bty = "n")
+
+qqnorm(subset(typing, Condition == "Podcast")[,1], xlab = "", ylab = "", main = "")
+qqline(subset(typing, Condition == "Podcast")[,1])
+legend("topleft", legend = "Podcast", bty = "n")
+
+qqnorm(subset(typing, Condition == "Nothing")[,1], xlab = "", ylab = "", main = "")
+qqline(subset(typing, Condition == "Nothing")[,1])
+legend("topleft", legend = "Nothing", bty = "n")
+
+mtext("Q-Q Plots for Each Sound Condition", 3, line = 1, outer = TRUE, cex = 1.5)
+mtext("Theoretical Quantiles", 1, line = -1, outer = TRUE)
+mtext("Sample Quantiles", 2, line = -1, outer = TRUE)
+```
+
+From the above boxplots and quantile plots, the assumption of normality for these samples does not appear to be violated.  The music group may have a little bit of a skew, but nothing to cause concern, especially with only $5$ samples. The other $2$ groups are approximately symmetrically distributed. The summary statistics of these data by group are included below.
+
+```{r OneFactorSummStats, echo = FALSE}
+# All summary statistics
+means <- aggregate(cpm~condition,data=typing, FUN = mean)
+sds <- aggregate(cpm~condition,data=typing, FUN = sd)
+lengths <- aggregate(cpm~condition,data=typing, FUN = length)
+summaryStats <- cbind(means,sds[,2],lengths[,2])
+colnames(summaryStats) <- c("Condition", "Mean CPM", "Std Dev", "N")
+kable(summaryStats, digits = 2, caption = "Summary Statistics")
+```
+
+The mean CPM for listening to nothing, music, and a podcast are `r summaryStats[1,2]`, `r summaryStats[2,2]`, and `r summaryStats[3,2]` respectively. The standard deviations are relatively similar to each other. By the looks of the summary statistics, the three groups do not have obvious differences in the CPM typed, but an ANOVA will give more details. 
+
+### Analysis  
+
+The first step for this analysis is fitting the ANOVA model: $y_{ij}=\mu+\alpha_i*condition+\epsilon,\epsilon\sim N(0,\sigma^2)$. The output of ANOVA is included in the table below.
+
+```{r OneFactorAnalysis, echo = FALSE}
+graphics.off()
+# ANOVA on data
+typing.out <- aov(cpm~condition,data=typing)
+kable(anova(typing.out), caption = "ANOVA Output", digits = 4)
+```
+
+As predicted from a look at the summary statistics, the model shows no evidence of any effect of any of the listening conditions on how many characters I can type in a minute (p-value: `r round(anova(typing.out)[1,5],4)`). The following barplot shows just how similar the three groups are, with bands of their standard errors.
+
+```{r OneFactorBarplot, echo = FALSE}
+# Standard error for barplots
+se <- sqrt(anova(typing.out)$`Mean Sq`[2]/(nrow(typing)+1))
+
+# Barplots
+colors <- c("firebrick4", "firebrick1", "gray60")
+mp <- barplot(means$cpm, names = c("Nothing", "Music", "Podcast"), ylab = "Characters per Minute", xpd = FALSE,
+        col = colors, ylim = c(200,250), main = "Effect of Sound Condition on Typing Ability")
+arrows(mp, means$cpm - se, mp, means$cpm + se, code = 3, angle = 90, col = "grey7")
+```
+
+Although my experiment of typing tests may not fully reflect how listening conditions can affect productivity, it is likely a good indicator that the impact is less severe than I originally thought. At a minimum, there is no evidence that listening to music or a podcast while typing would slow me down or affect my productivity. Also, my bias against listening to music while typing remains without evidence.
+
+  
+### Example of a Linear Model  
+
+This model is also linear, but needs some adjustment from the intuitive approach to an ANOVA model. A first approach to this model would likely give
+$$\begin{align}
+\mathbf{Y}&=\mathbf{X\beta+\epsilon} \\
+\left[\begin{matrix}
+y_1 \\
+y_2 \\
+\vdots \\
+y_n 
+\end{matrix}\right]&= \left[\begin{matrix}
+1 & Z_{11} & Z_{21} & Z_{31} \\
+1 & Z_{12} & Z_{22} & Z_{32} \\
+\vdots & \vdots & \vdots & \vdots\\
+1 & Z_{1n} & Z_{2n} & Z_{3n}
+\end{matrix}\right]\left[\begin{matrix}
+\mu \\
+\alpha_1 \\
+\alpha_2 \\
+\alpha_3
+\end{matrix}\right] + \left[\begin{matrix}
+\epsilon_1 \\
+\epsilon_2 \\
+\vdots \\
+\epsilon_n
+\end{matrix}\right], \\
+\quad\text{where}\quad Z_{1i} &=
+        \begin{cases} 
+            1, & \quad sound=Nothing \\
+            0, & \quad otherwise
+        \end{cases}
+    \text{, } Z_{2i}=
+        \begin{cases} 
+            1, & \quad sound=Music \\
+            0, & \quad otherwise
+        \end{cases}
+    \text{,} \\
+    \text{and } Z_{3i}&=
+        \begin{cases} 
+            1, & \quad sound=Podcast \\
+            0, & \quad otherwise
+        \end{cases}
+\end{align}$$
+
+Unfortunately, this naive model produces linearly dependent columns in the $X$ matrix. One solution is to remove the second column, which affects the interpretation of $\mathbf{\beta}$ but fits the same model. The correct linear interpretation of the one-factor analysis is as follows:
+
+$$\begin{align}
+\mathbf{Y}&=\mathbf{X\beta+\epsilon} \\
+\left[\begin{matrix}
+y_1 \\
+y_2 \\
+\vdots \\
+y_n 
+\end{matrix}\right]&= \left[\begin{matrix}
+1 & Z_{11} & Z_{21} \\
+1 & Z_{12} & Z_{22} \\
+\vdots & \vdots & \vdots \\
+1 & Z_{1n} & Z_{2n}
+\end{matrix}\right]\left[\begin{matrix}
+\mu + \alpha_1 \\
+\alpha_2 - \alpha_1 \\
+\alpha_3 - \alpha_1
+\end{matrix}\right] + \left[\begin{matrix}
+\epsilon_1 \\
+\epsilon_2 \\
+\vdots \\
+\epsilon_n
+\end{matrix}\right], \\
+\quad\text{where}\quad Z_{1i}&=
+        \begin{cases} 
+            1, & \quad sound=Music \\
+            0, & \quad otherwise
+        \end{cases}
+    \text{, and } Z_{2i}=
+        \begin{cases} 
+            1, & \quad sound=Podcast \\
+            0, & \quad otherwise
+        \end{cases}
+\end{align}$$
+In this model, the elements of $\mathbf{\beta}$ represent the true mean plus the effect of having no sound in the first element, the difference between the effects of no sound and having music in the second, and the difference between the effects of no sound and having  podcast in the third. The $\mathbf{Y}$ matrix is the recorded CPM from the experiment, which has $n$ observations. The $\mathbf{\epsilon}$ matrix is an $n\times1$ matrix of normally distributed error, centered on $0$, with $\sigma^2$ variance. 
+
+## Two-Factor Experiment  
+  
+A two-factor experiment brings another variable into the previous type of analysis. On top of another effect to review, these experiments also allow for a look at the potential interaction effect between the two variables. An interaction means that the effect of one of the factors changes based on the level of the other factor.
+  
+### Application Description  
+
+A few years ago in Stat 230, I tested the effects of the type of "mug", type of liquid, and any interaction between the two on how hot a microwave can get hot chocolate after $90$ seconds in the microwave. With Todd Okeson and Eric McGill's permission, this data is included as an example of a two-factor experiment. In this experiment, hot chocolate powder was mixed into one of three different liquids, and into different types of cups. These hot chocolate mixtures were heated in microwaves for $90$ seconds. Thermometers measured the temperatures immediately following the $90$ seconds.
+
+### Data Details  
+
+This data comes from an experiment I conducted with my group, the layout of which is as follows:
+
+*Response Variable*
+Temperature of hot chocolate (degrees Farenheit)
+
+*Factor (Levels)*
+Factor 1: Cup (plastic cup, ceramic mug)
+Factor 2: Liquid (water, 2% milk, almond milk)
+
+*Experimental Unit*
+For each liquid-cup combination, mix the hot chocolate for $15$ seconds before microwaving for $90$ seconds. The liquid is then measured with a thermometer (not touching the sides of the cup) for $20$ seconds. 
+
+*Replication*
+Each factor level combination had $6$ replicates. 
+
+*Randomization*
+We took several precautions to avoid potential lurking variables. For example, we collected several mugs of the different types from varying locations, and then randomly selectewd out of those a sample to experiment on. We also bought our milks and got our waters from different sources. We stored the liquids in the same type of jugs overnight in the same fridge so that they would all start at similar temperatures. The trials were randomized and we used room-temperature water baths for the hot chocolate whisks in between trials. Other measures were also taken to minimize latent effects. 
+
+A boxplot of the results of this experiment are included below.
+
+```{r TwoFactorDataEntry, echo = FALSE}
+hotChocolate <- read.csv(header = TRUE, file = "C:/Users/cason/Desktop/Classes/Old Classes/Assignments/Stat 535/Application Portfolio/HotChocolate.csv")
+hotChocolate <- hotChocolate[,-c(1:2)]
+hotChocolate <- subset(hotChocolate, Cup != "GlassCup")
+```
+
+```{r TwoFactorEDA, echo = FALSE}
+hotChocolate$Liquid <- relevel(as.factor(hotChocolate$Liquid), "Water")
+hotChocolate$Cup <- relevel(as.factor(hotChocolate$Cup), "PlasticCup")
+
+out.choc <- aov(Temperature ~ Liquid + Cup + Liquid * Cup, data = hotChocolate)
+boxplot(out.choc$residuals, main = "Boxplot of Residuals")
+
+index.max <- sort(out.choc$residuals, decreasing = TRUE, index.return = TRUE)[[2]]
+text(1.05,out.choc$residuals[index.max[1]],paste0("Outlier: Trial ",index.max[1]),adj=0)
+text(1.05,out.choc$residuals[index.max[2]],paste0("Outlier: Trial ",index.max[2]),adj=0)
+```
+
+The two outliers from this experiment are trials $`r index.max[1]`$ and $`r index.max[2]`$. They are both from trials with plastic cups, so they will not be excluded from this analysis, in case they represent an important trend. Summary statistics of these data are included below.
+
+```{r TwoFactorSummStats, echo = FALSE}
+means <- aggregate(Temperature ~ Liquid + Cup, data = hotChocolate, FUN = "mean")
+mins <- aggregate(Temperature ~ Liquid + Cup, data = hotChocolate, FUN = "min")
+maxes <- aggregate(Temperature ~ Liquid + Cup, data = hotChocolate, FUN = "max")
+sds <- aggregate(Temperature ~ Liquid + Cup, data = hotChocolate, FUN = "sd")
+summStats <- cbind(means, mins[,3],maxes[,3], sds[,3])
+colnames(summStats) <- c("Liquid", "Cup", "Mean Temp","Min Temp","Max Temp", "Std Dev of Temp")
+kable(summStats, digits = 4, caption = "Summary Statistics of Hot Chocolate Data")
+```
+
+```{r nameFunction}
+getName <- function(cup, liquid) {
+  cupL <- substr(cup,1,1)
+  liquidL <- substr(liquid,1,1)
+  cup.out <- ifelse(cupL=="P", "plastic cup", "ceramic mug")
+  liquid.out <- ifelse(liquidL=="W","water", ifelse(liquidL=="2", "2% milk", "almond milk"))
+  c("c"=cup.out,"l"=liquid.out)
+}
+```
+
+From the two factors, $6$ factor level combinations are possible. The overall minimum temperature was $`r round(min(hotChocolate$Temperature),2)`$ (from `r getName("CeramicMug",hotChocolate$Liquid[which.min(hotChocolate$Temperature)])[2]` in a `r getName(hotChocolate$Cup[which.min(hotChocolate$Temperature)],"Water")[1]`). The overall maximum temperature was $`r round(max(hotChocolate$Temperature),2)`$ (from `r getName("CeramicMug",hotChocolate$Liquid[which.max(hotChocolate$Temperature)])[2]` in a `r getName(hotChocolate$Cup[which.max(hotChocolate$Temperature)],"Water")[1]`). The different groups have relatively similar variance of temperatures and the means for the different groups range between $`r round(min(summStats[,3]),2)`$ and $`r round(max(summStats[,3]),2)`$.
+
+An interaction plot displays the potential for an interaction effect. This type of plot shows the means of all of the different factor-level combinations. If lines cross, this is typically a strong indication of an interaction effect. The interaction plot from this experiment is shown below.
+
+```{r TwoFactorInteractionPlot, echo = FALSE}
+plot(y = means$Temperature, x = as.numeric(means$Cup), col = colors[as.numeric(means$Liquid)], pch = 19, 
+     main = "Interaction Plot", xlab = "Cup", xaxt = "n", xlim = c(.8,2.2), ylab = "Temperature")
+segments(x0 = 1, x1 = 2, y0 = means$Temperature[1:3], y1 = means$Temperature[4:6], col = colors[as.numeric(means$Liquid)], lty = "dashed")
+axis(1, at = 1:2, labels = levels(means$Cup)[-3])
+legend("topright", lty = "dashed", col=colors, legend = levels(means$Liquid), cex = .75)
+```
+
+Although the lines of these effects are not parallel, the lines do not cross. This most likely means that evidence for an interaction effect is inconclusive. 
+
+### Analysis
+
+To get a further look at main and interaction effects, first the ANOVA model is fit: $y_{ijk} = \mu + \beta_{1i} * Liquid + \beta_{2j} * Cup + \beta_{3ij} * Liquid * Cup + \epsilon_{k}, \epsilon\sim N(0,\sigma^2)$. Output from this model is included in the folowing table.
+
+```{r TwoFactorModel, echo = FALSE}
+# Creating a new model
+out.chocolate <- aov(Temperature ~ Liquid + Cup + Liquid * Cup, data = hotChocolate)
+
+# ANOVA table
+kable(anova(out.chocolate), digits = 4, caption = "ANOVA Output")
+```
+
+The effect of liquid on temperature appears to be significant (p-value: $`r round(anova(out.chocolate)[1,5],4)`$). There is no evidence for a significant effect of cup type on temperature (p-value: $`r round(anova(out.chocolate)[2,5],4)`$) and no evidence of an interaction effect between liquid and cup type on temperature (p-value: $`r round(anova(out.chocolate)[3,5],4)`$). Because there is no evidence of an effect, we will exclude the interaction term from the model to fit the new model: $y_{ijk} = \mu + \beta_{1i} * Liquid + \beta_{2j} * Cup + \epsilon_{k}, \epsilon\sim N(0,\sigma^2)$.
+
+```{r TwoFactorModel2, echo = FALSE}
+# Creating a new model
+out2.chocolate <- aov(Temperature ~ Liquid + Cup, data = hotChocolate)
+
+# ANOVA table
+kable(anova(out2.chocolate), digits = 4, caption = "ANOVA Output on Simplified Model")
+```
+
+This new model yields the same conclusions of strong evidence of an effect of liquid on temperature (p-value: $`r round(anova(out2.chocolate)[1,5],4)`$) and no significant evidence of cup type on temperature (p-value: $`r round(anova(out2.chocolate)[2,5],4)`$). A Tukey pairwise comparison test looks at which levels of the liquid factor are significantly different. A table of these pairwise comparisons is shown below.
+
+```{r TwoFactorTukey, echo = FALSE}
+# Tukey pairwise interaction effects
+kable(TukeyHSD(out2.chocolate)$Liquid, digits = 5, caption = "Tukey Pairwise Comparisons")
+```
+
+From the table, the only pair that have evidence of a significant difference is almond milk against water. The temperature of hot chocolate made with water is an estimated $`r round(abs(TukeyHSD(out2.chocolate)$Liquid[2,1]),1)`$ degrees hotter than hot chocolate made with almond milk (p-value: $`r round(abs(TukeyHSD(out2.chocolate)$Liquid[2,4]),4)`$). Although not statistically significant, the temperature of hot chocolate made with water is an estimated $`r round(abs(TukeyHSD(out2.chocolate)$Liquid[1,1]),1)`$ degrees hotter than hot chocolate made with $2$% milk (p-value: $`r round(abs(TukeyHSD(out2.chocolate)$Liquid[1,4]),4)`$).
+
+### Example of a Linear Model  
+This case is an example of $\mathbf{Y=X\beta+\epsilon}$, with
+
+$$\begin{align}
+\mathbf{Y}&=\mathbf{X\beta+\epsilon} \\
+\left[\begin{matrix}
+y_1 \\
+y_2 \\
+\vdots \\
+y_n 
+\end{matrix}\right]&= \left[\begin{matrix}
+1 & Z_{11} & Z_{21} & Z_{31} & Z_{11}*Z_{31} & Z_{21}*Z_{31} \\
+1 & Z_{12} & Z_{22} & Z_{32} & Z_{12}*Z_{32} & Z_{22}*Z_{32} \\
+\vdots & \vdots & \vdots & \vdots & \vdots \\
+1 & Z_{1n} & Z_{2n} & Z_{3n} & Z_{1n}*Z_{3n} & Z_{2n}*Z_{3n}
+\end{matrix}\right]\left[\begin{matrix}
+\beta_0 \\
+\beta_1 \\
+\beta_2 \\
+\beta_3 \\
+\beta_4 \\
+\beta_5
+\end{matrix}\right] + \left[\begin{matrix}
+\epsilon_1 \\
+\epsilon_2 \\
+\vdots \\
+\epsilon_n
+\end{matrix}\right], \\
+\quad\text{where}\quad Z_{1i}&=
+        \begin{cases}
+            1, & \quad liquid=2\%Milk \\
+            0, & \quad otherwise
+        \end{cases} 
+    \text{, } Z_{2i}=
+        \begin{cases}
+            1, & \quad liquid=AlmondMilk \\
+            0, & \quad otherwise
+        \end{cases} 
+    \text{,} \\
+    \text{and } Z_{3i}&=
+        \begin{cases}
+            1, & \quad Cup=CeramicMug \\
+            0, & \quad otherwise
+        \end{cases} 
+\end{align}$$
+
+
+The linear model for two-factor experiments are like those of one-factor experiments, with a few additional columns in the $\mathbf{X}$ matrix and a few additional coefficients in the $\mathbf{\beta}$ matrix. First of all, columns are added for the second factor (one column for every level after the first). Interaction columns are added, as products of the columns that correspond to each factor-level combination. In the $\mathbf{\beta}$ matrix, the elements are as follows:  
+
+* $\beta_0$ is the true mean temperature plus the effect of water in a plastic cup (and it's interaction)
+* $\beta_1$ is the difference between the effect of water and the effect of 2% Milk (and the interaction with water)
+* $\beta_2$ is the difference between the effect of water and the effect of almond milk (and the interaction with water)
+* $\beta_3$ is the difference between the effect of a plastic cup and the effect of a ceramic mug (and the interaction with water)
+* $\beta_4$ is the difference between the interaction effect of water and a plastic cup and the interaction effect of 2% milk and a ceramic mug
+* $\beta_5$ is the difference between the interaction effect of water and a plastic cup and the interaction effect of almond milk and a ceramic mug  
+
+Thus for any row of the $X$ matrix, the effect of a single level of liquid, of a single level of cup, and the interaction are included. The $\mathbf{Y}$ matrix is the recorded temperature of each hot chocolate from the experiment, which has $n$ observations. The $\mathbf{\epsilon}$ matrix is an $n\times1$ matrix of normally distributed error, centered on $0$, with $\sigma^2$ variance. 
+
+## One-Factor Analysis of Covariance  
+  
+A one-factor analysis of covariance is simply a one-factor ANOVA, after accounting for a second, continuous variable. 
+  
+### Application Description  
+
+Many interesting characteristics could possibly affect the education of young students. Many think that stay-at-home moms make for the best environment for kids. The theory is that moms who are at home (not working) have more time to teach and nurture kids, who will then do better in school. I would love to explore this theory.
+
+Another interesting characteristic to look at is the effect of absences on student performance. An intuitive guess is that students who don't come to class have their grades negatively impacted, but the actual effect needs to be explored. An interaction between number of absences and the students' mother's occupation will also be addressed.
+
+### Data Details  
+
+This data was originally collected by [Dr. Paulo Cortez](http://www3.dsi.uminho.pt/pcortez/Home.html), but was obtained in 2019 from [UC Irvine's Machine Learning Repository](http://archive.ics.uci.edu/ml/index.php). This particular [data set](http://archive.ics.uci.edu/ml/datasets/Student+Performance) was released in 2014. It includes roughly $30$ attributes about a group of about $650$ Portuguese middle-school students. Out of these attributes, $2$ will be analyzed (the two variables Mjob and absences). Datasets on results for Math and Portuguese classes are given, but this analysis focuses only on the grades for math. The student's grades are reported per semester as G1, G2, or G3. These grades are scored on a $0$-$20$ scale. 
+
+```{r CovDataEntry, echo = FALSE}
+# Reading in the data
+grades <- read.csv("C:/Users/cason/Desktop/Classes/Old Classes/Assignments/Stat 535/Application Portfolio/grades.csv")
+```
+
+We want only the columns of interest: Mother's job, number of absences, and trimester grades. We want the average grade across the $3$ trimesters instead of $3$ separate outcomes across the different trimesters. The mother's job will be releveled to compare each level to at-home mothers. For simplicity, the data is subset to only rows with $3$ of the possible options of mother's jobs: at-home mothers, mothers working in health, and teaching mothers.
+
+A glimpse at a few rows of these updated data are shown in the folowing table.
+
+```{r CovData2, echo = FALSE}
+# Getting interesting columns
+grades <- grades[,which(colnames(grades)%in%c("Mjob", "absences", "G1", "G2", "G3"))]
+
+# Get average grades across three trimesters
+grades$avg.grades <- apply(grades[,which(colnames(grades)%in%c("G1", "G2", "G3"))],1,mean)
+
+# Convert Mjob to character, relable the "at-home" moms
+grades$Mjob <- as.character(grades$Mjob)
+grades$Mjob <- ifelse(grades$Mjob=="at+AF8-home", "at-home", grades$Mjob)
+
+# Subset to rows with moms of the three types to be analyzed (for simplicity) and drop the trimester grade data
+grades <- subset(subset(grades,absences>0),Mjob%in%c("at-home","health","teacher"))
+grades <- grades[,-which(colnames(grades)%in%c("G1", "G2", "G3"))]
+
+# Relevel the Mjob factor
+grades$Mjob <- relevel(as.factor(grades$Mjob), "at-home")
+
+kable(head(grades), digits = 4, caption = "First Few Rows of Subset Student Data")
+```
+
+The next step is to look at the summary statistics of grades, split by mother's work. These statistics are summarized in the following table.
+
+```{r CovData3, echo = FALSE}
+# Average grades by mother's job type
+summStats <- cbind(aggregate(avg.grades~Mjob, data = grades, FUN = mean),aggregate(avg.grades~Mjob, data = grades, FUN = sd)[,-1],
+      aggregate(avg.grades~Mjob, data = grades, FUN = min)[,-1],aggregate(avg.grades~Mjob, data = grades, FUN = max)[,-1],
+      aggregate(avg.grades~Mjob, data = grades, FUN = length)[,-1])
+colnames(summStats) <- c("Mother's Job", "Mean","SD","Min","Max","n")
+kable(summStats, caption = "Summary Statistics of Grades")
+```
+
+The $3$ group means are similar (around $10$-$12$) and the standard deviations are also comparable (around $3$). Maximum possible grade. The overall minimum average grade is $`r round(min(grades$avg.grades),2)`$ and the overall maximum grade is $`r round(max(grades$avg.grades),2)`$. 
+
+The following scatterplot summarizes all of the grades, by number of absences and shows the need for transformations, due to non-linearity.
+
+```{r CovData4, echo = FALSE}
+# Show scatterplot, and then log-transformed plot
+plot(avg.grades~absences, data = grades, type = 'n', main = "Scatterplot of Absences and Grades")
+points(avg.grades~absences, data = subset(grades,Mjob==levels(grades$Mjob)[1]), pch = 19, col = colors[1])
+points(avg.grades~absences, data = subset(grades,Mjob==levels(grades$Mjob)[2]), pch = 19, col = colors[2])
+points(avg.grades~absences, data = subset(grades,Mjob==levels(grades$Mjob)[3]), pch = 19, col = colors[3])
+legend("topright", col = colors, pch = 19, legend = levels(grades$Mjob))
+```
+
+This scatterplot shows that a log transformation of both absences and average grades is required. The data should look like a linear scatterplot, but instead looks like it has a multiplicative effect. The following is the same plot on log scale, labeled by mother's job. Because $\log{(0)}=-\infty$, the students with $0$ absences are excluded from this analysis.
+
+```{r CovDataLogTrans, echo = FALSE}
+# Convert to log scale
+plot(log(avg.grades)~log(absences), data = grades, type = 'n', main = "Scatterplot of log(Absences) and log(Grades)")
+points(log(avg.grades)~log(absences), data = subset(grades,Mjob==levels(grades$Mjob)[1]), pch = 19, col = colors[1])
+points(log(avg.grades)~log(absences), data = subset(grades,Mjob==levels(grades$Mjob)[2]), pch = 19, col = colors[2])
+points(log(avg.grades)~log(absences), data = subset(grades,Mjob==levels(grades$Mjob)[3]), pch = 19, col = colors[3])
+legend("topright", col = colors, pch = 19, legend = levels(grades$Mjob))
+```
+
+This plot looks much more linear, which is an assumption of an analysis of covariance of this type. There is no clear trend between the three types of mothers' working situations. The following plot shows the R studentized residuals of a model on these data, as compared to a standard normal distribution. If the two densities are roughly equal, than this model's assumtion of normality is filled.
+
+```{r Covnormality, echo = FALSE}
+plot(density(rstudent(lm(log(avg.grades)~log(absences)+Mjob+log(absences)*Mjob, data = grades))),
+     main = "Density of R Studentized Residuals", ylim = c(0,.5))
+curve(dnorm(x),add = TRUE, col = colors[1])  
+legend("topright", lty = "solid", col = c("black",colors[1]), legend = c("R-Studentized Residuals", "Standard Normal"), cex = .7)
+```
+
+Because the two lines are roughly equal, the above plot shows that the assumption of normality has no red flags.
+
+### Analysis  
+
+As always, the first step of the analysis after inspecting the data is to fit the model. We will fit the model: $\log{(grade)} = \beta_0 + \beta_1*health + \beta_2*teacher  + \beta_3 * \log{(absences)} + \beta_4 * health * \log{(absences)} + \beta_5 * health * \log{(absences)} + \epsilon_{ij}$. The following table reports the resulting model output.
+
+```{r CovAnalysis1, echo = FALSE}
+# Fit the model
+grades.out <- lm(log(avg.grades)~log(absences)+Mjob+log(absences)*Mjob, data = grades, x=TRUE,y=TRUE)
+kable(summary(grades.out)$coefficients, digits = 4, caption = "Model Summary")
+```
+
+There is no evidence of any interaction effect between the mother's job and absences on students' grades ($p$-values of `r round(summary(grades.out)$coefficients[5,4],4)` and `r round(summary(grades.out)$coefficients[6,4],4)` for jobs in health or teaching, respectively), so those terms will be excluded from the model. We will now fit the model $\log{(grade)} = \beta_0 + \beta_1*health + \beta_2*teacher  + \beta_3 * \log{(absences)} + \epsilon_{ij}$ excluding the interaction terms. The output from this model is shown in the following table.
+
+```{r CovAnalysis2, echo = FALSE}
+# Fit the model
+grades.out <- lm(log(avg.grades)~log(absences)+Mjob, data = grades, x=TRUE,y=TRUE)
+kable(summary(grades.out)$coefficients, caption = "Model Summary", digits = 4)
+```
+
+For every 1% increase in absences, a student's grades will decrease by an estimated $`r 100*round(abs(summary(grades.out)$coefficients[2,1]),3)`\%$ (p-value: $`r round(abs(summary(grades.out)$coefficients[2,4]),4)`$). The grades of a student whose mother works in health (as opposed to a stay-at-home mom) has an estimated increase of $`r 100*round(abs(summary(grades.out)$coefficients[3,1]),3)`\%$ (p-value: $`r round(abs(summary(grades.out)$coefficients[3,4]),4)`$). The grades of a student whose mother works as a teacher (as opposed to a stay-at-home mom) has an estimated increase of $`r 100*round(abs(summary(grades.out)$coefficients[4,1]),3)`\%$ (p-value: $`r round(abs(summary(grades.out)$coefficients[4,4]),4)`$).
+
+The following plot shows the effects of absences and mothers' job on students' grades.
+
+```{r CovAnalysisPlot, echo = FALSE}
+# Plot for grades of students with the effects of mother's jobs and number of asbsences
+plot(log(avg.grades)~log(absences), data = grades, type = 'n', main = "Grades by Absences and Mother's Work")
+
+# Plot for at-home mothers
+points(log(avg.grades)~log(absences), data = subset(grades,Mjob==levels(grades$Mjob)[1]), pch = 19, col = colors[1])
+abline(grades.out$coefficients[1], grades.out$coefficients[2], col = colors[1])
+
+# Plot for grades of students with health-worker mothers
+points(log(avg.grades)~log(absences), data = subset(grades,Mjob==levels(grades$Mjob)[2]), pch = 19, col = colors[2])
+abline(grades.out$coefficients[1] + grades.out$coefficients[3], grades.out$coefficients[2], col = colors[2])
+
+# Plot for grades of students with teaching mothers
+points(log(avg.grades)~log(absences), data = subset(grades,Mjob==levels(grades$Mjob)[3]), pch = 19, col = colors[3])
+abline(grades.out$coefficients[1] + grades.out$coefficients[4], grades.out$coefficients[2], col = colors[3])
+
+legend("topright", col = colors, lty = "solid", legend = levels(grades$Mjob))
+```
+
+A look at the three distinct lines of the effect plot shown makes it seem that students with moms working in health or working as teachers have significantly better grades, but not too different from eah other. Because there is no significant evidence of any interaction effect between mother's job and number of absences on grades, the slopes of the three lines are the same. The slope of the three lines representes the incremental effect of more absences on grades. The shifts between the lines represents the relative effects of students having a mom in one of the three working situations.
+
+A reduced model is fit, and compared to the full model in an ANOVA. This type of fit shows if the extra terms included in the full model are statistically significant. The following table reports the model output.
+
+```{r CovAnalysisModelFit, echo = FALSE}
+# Fit ANOVA model to test effect of mother's job type
+grades.reduced <- lm(log(avg.grades)~log(absences), data = grades)
+# ANOVA comparing both models
+anova.out <- anova(grades.reduced,grades.out)
+kable(anova.out, caption = "Results of ANOVA Testing Effect of Mother's Work", digits = 4)
+```
+
+The ANOVA comparing a model with just absences to one with absences and mother's job reveals that the additive effect of a students' mother's job has a significant effect on grades (p-value: `r round(anova.out[[6]][2],3)`). This analysis gives compelling evidence that students with at-home mothers do not necessarily get better grades (at least in math) than those with moms working in health or as teachers. A lot could be done to perform a more rigorous analysis, and an experiment would be necessary to describe any causal relationships.
+  
+### Example of a Linear Model  
+
+This case is an example of $\mathbf{Y=X\beta+\epsilon}$, with 
+$$\begin{align}
+\mathbf{Y}&=\mathbf{X\beta+\epsilon} \\
+\left[\begin{matrix}
+\ln{y_1} \\
+\ln{y_2} \\
+\vdots \\
+\ln{y_n}
+\end{matrix}\right]&=\left[\begin{matrix}
+1 & \ln{X_1} & Z_{11} & Z_{21} & \ln{X_1}*Z_{11} & \ln{X_1}*Z_{21}\\
+1 & \ln{X_2} & Z_{12} & Z_{22} & \ln{X_2}*Z_{12} & \ln{X_2}*Z_{22}\\
+\vdots & \vdots & \vdots & \vdots & \vdots \\
+1 & \ln{X_n} & Z_{1n} & Z_{2n} & \ln{X_n}*Z_{1n} & \ln{X_n}*Z_{2n}
+\end{matrix}\right]\left[\begin{matrix}
+\beta_0 \\
+\beta_1 \\
+\beta_2 \\
+\beta_3 \\
+\beta_4 \\
+\beta_5
+\end{matrix}\right]+ \left[\begin{matrix}
+\epsilon_1 \\
+\epsilon_2 \\
+\vdots \\
+\epsilon_n
+\end{matrix}\right],\quad \\ 
+\text{where}\quad Z_{1i}&=
+        \begin{cases}
+            1, & \quad health \\
+            0, & \quad otherwise \\
+        \end{cases}
+    \quad\text{and}\quad Z_{2i}=
+        \begin{cases}
+            1, & \quad teacher \\
+            0, & \quad otherwise \\
+        \end{cases}
+\end{align}$$
+
+This example of a linear model includes log transformations of both the repsonse variable (average grades) and the continuous explanatory variable (absences). The $\mathbf{X}$ matrix in this case is extremely similar to that of the two-factor experiment. One difference is that this $\mathbf{X}$ matrix has columns with continuous values for one of the explanatory variables instead of all indicator functions. The $\mathbf{Y}$ matrix is the recorded average grades of each of the $n$ students. The $\mathbf{\epsilon}$ matrix is an $n\times1$ matrix of normally distributed error, centered on $0$, with $\sigma^2$ variance. The $\mathbf{\beta}$ is also similar.
+
+
+## Conclusion  
+
+Linear models are extremely useful for analysing and interpreting real data. Experimental designs are the most useful to infer causal relationships, but inferences can be drawen even from observational data using linear models. The examples included in this application portfolio are just a few simple examples, but many more exist. Many times, a model may not initially appear to fit the assumption of a linear model (like non-normality or an apparent multiplicative effect), but may be transformed in such a way that a linear model is still an effective tool. 
+
+
+```{r getLabels, echo = FALSE}
+labs <- all_labels()
+SRSLabs <- labs[substr(labs,1,3) == "SRS"]
+TwoMeansLabs <- labs[substr(labs,1,7) == "TwoMean"]
+OneFactorLabs <- labs[substr(labs,1,9) == "OneFactor"]
+TwoFactorLabs <- labs[substr(labs,1,9) == "TwoFactor"]
+CovLabs <- labs[substr(labs,1,3) == "Cov"]
+```
+
+<!-- 
+## Appendix  
+
+Included below is all the R code used in the above examples. 
+
+#### R Code for SRS Mean  
+```{r SRSCode, ref.label=SRSLabs, eval = FALSE}
+```
+
+#### R Code for Two Means  
+```{r TwoMeansCode, ref.label=TwoMeansLabs[-1], eval = FALSE}
+```
+
+#### R Code for One-Factor Experiment  
+```{r OneFactorCode, ref.label=OneFactorLabs, eval = FALSE}
+```
+
+#### R Code for Two-Factor Experiment  
+```{r TwoMeansCode, ref.label=TwoFactorLabs, eval = FALSE}
+```
+
+#### R Code for Analysis of Covariance  
+```{r CovCode, ref.label=CovLabs, eval = FALSE}
+```
+-->
