@@ -5,6 +5,7 @@ output:
   html_document:
     includes:
       in_header: "favicon.html" 
+      in_header: "myheader.html"
 ---
 
 <!-- Global site tag (gtag.js) - Google Analytics -->
