@@ -7,6 +7,16 @@ output:
       in_header: "favicon.html" 
 ---
 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-96P79DKY2K"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-96P79DKY2K');
+</script>
+
 <style>
   .title{
     display: none;
