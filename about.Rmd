@@ -4,18 +4,9 @@ output:
   html_document:
     includes:
       in_header: "favicon.html" 
-      in_header: "myheader.html"
 ---
 
-<!-- Global site tag (gtag.js) - Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-96P79DKY2K"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
 
-  gtag('config', 'G-96P79DKY2K');
-</script>
 
 :::: {.col-md-12}
 ::: {.col-md-3}
