@@ -147,6 +147,7 @@ output:
 <p class="fa fa-fw fa-lg" style="font-size:Large; text-align:left">pandas</p><br>
 <p class="fa fa-fw fa-lg" style="font-size:Large; text-align:left">sklearn</p><br>
 <p class="fa fa-fw fa-lg" style="font-size:Large; text-align:left">Stan</p><br>
+<p class="fa fa-fw fa-lg" style="font-size:Large; text-align:left">Pytorch</p><br>
 :::
 ::: {.column width="60%"}
 <p class="fa fa-star fa-lg" style="text-align:right"></p>
@@ -178,6 +179,12 @@ output:
 <p class="fa fa-star fa-lg" style="text-align:right"></p>
 <p class="fa fa-star-o fa-lg" style="text-align:right"></p>
 <p class="fa fa-star-o fa-lg" style="text-align:right"></p>
+<br>
+<p class="fa fa-star fa-lg" style="text-align:right"></p>
+<p class="fa fa-star fa-lg" style="text-align:right"></p>
+<p class="fa fa-star fa-lg" style="text-align:right"></p>
+<p class="fa fa-star-o fa-lg" style="text-align:right"></p>
+<p class="fa fa-star-o fa-lg" style="text-align:right"></p>
 :::
 ::::
 
@@ -189,8 +196,8 @@ output:
 <p class="fa fa-fw fa-lg" style="font-size:Large; text-align:left">Regression</p><br>
 <p class="fa fa-fw fa-lg" style="font-size:Large; text-align:left">Bayesian</p><br>
 <p class="fa fa-fw fa-lg" style="font-size:Large; text-align:left">Multivariate</p><br>
-<p class="fa fa-fw fa-lg" style="font-size:Large; text-align:left">NLP</p><br>
-<p class="fa fa-fw fa-lg" style="font-size:Large; text-align:left">Unsupervised</p><br>
+<p class="fa fa-fw fa-lg" style="font-size:Large; text-align:left">Language</p><br>
+<p class="fa fa-fw fa-lg" style="font-size:Large; text-align:left">Deep Learning</p><br>
 :::
 ::: {.column width="60%"}
 <p class="fa fa-star fa-lg" style="text-align:right"></p>
@@ -272,7 +279,7 @@ Exposure to Hadoop, Databricks, h2o, and TensorFlow
 #####  Other
 <ul style="margin-top: -10px">
 <li>Fluent in Spanish</li>
-<li>Statistics Department Dean's List, 2016 to present</li>
+<li>Statistics Department Dean's List, 2016 to 2021</li>
 <li>Eagle Scout</li>
 </ul> 
 
@@ -285,5 +292,5 @@ Exposure to Hadoop, Databricks, h2o, and TensorFlow
     <a href="https://github.com/casonwight" target="_blank" class="fa fa-github fa-lg fa-fw"></a>
 </p>
 
-<a href="Resume 2020.pdf" download target="_blank"><p style="text-align:center">Download my Resume</p></a>
+<a href="Cason Wight Resume.pdf" download target="_blank"><p style="text-align:center">Download my Resume</p></a>
 <p style="text-align:center; font-size:75%; color:grey">Made by Cason Wight</p>

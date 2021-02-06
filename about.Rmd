@@ -44,5 +44,5 @@ He is passionate about data visualization and is interested in the trade-off bet
     <a href="https://github.com/casonwight" target="_blank" class="fa fa-github fa-lg fa-fw"></a>
 </p>
 
-<a href="Resume 2020.pdf" download target="_blank"><p style="text-align:center">Download my Resume</p></a>
+<a href="Cason Wight Resume.pdf" download target="_blank"><p style="text-align:center">Download my Resume</p></a>
 <p style="text-align:center; font-size:75%; color:grey">Made by Cason Wight</p>

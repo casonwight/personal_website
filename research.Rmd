@@ -113,5 +113,5 @@ This undergraduate research project was in collaboration with Dr. Brian Hartman,
     <a href="https://github.com/casonwight" target="_blank" class="fa fa-github fa-lg fa-fw"></a>
 </p>
 
-<a href="Resume 2020.pdf" download target="_blank"><p style="text-align:center">Download my Resume</p></a>
+<a href="Cason Wight Resume.pdf" download target="_blank"><p style="text-align:center">Download my Resume</p></a>
 <p style="text-align:center; font-size:75%; color:grey">Made by Cason Wight</p>

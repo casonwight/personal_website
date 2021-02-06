@@ -13,7 +13,7 @@ output:
 <div style="margin: 0; position: relative;
   top: 50%; -ms-transform: translateY(-50%);
   transform: translateY(-50%);">
-<a href="Stat 651 Project/Project Report.pdf" download  target="_blank">![](Portfolio Images/Games_Won.png){width=95%}</a>
+<a href="Stat 651 Project/NFL Attendance Report.pdf" download  target="_blank">![](Portfolio Images/Games_Won.png){width=95%}</a>
 </div>
 </div>
 :::
@@ -22,9 +22,9 @@ output:
 <div style="margin: 0; position: relative;
   top: 50%; -ms-transform: translateY(-50%);
   transform: translateY(-50%);">
-<a href="Stat 651 Project/Project Report.pdf" download target="_blank"><p style="font-size:large; margin-bottom:0">Impact of Covid on NFL Attendance (Bayesian Time Series)</p></a>
-<p style="margin-bottom:0">**Code:** <a href="Stat 651 Project/Analysis Code.Rmd" download target="_blank">Analysis (.Rmd)</a> | <a href="Stat 651 Project/final_stan.stan" download target="_blank">Model (.stan)</a></p>
-<a href="Stat 651 Project/Project Presentation.pdf" download target="_blank"><p style="margin-bottom:0">Slides</p></a>
+<a href="Stat 651 Project/NFL Attendance Report.pdf" download target="_blank"><p style="font-size:large; margin-bottom:0">Impact of Covid on NFL Attendance (Bayesian Time Series)</p></a>
+<p style="margin-bottom:0">**Code:** <a href="Stat 651 Project/NFL Attendance Analysis.Rmd" download target="_blank">Analysis (.Rmd)</a> | <a href="Stat 651 Project/NFL Model.stan" download target="_blank">Model (.stan)</a></p>
+<a href="Stat 651 Project/NFL Attendance Slides.pdf" download target="_blank"><p style="margin-bottom:0">Slides</p></a>
 *Dec 5, 2020*
 </div>
 </div>
@@ -37,7 +37,7 @@ output:
 <div style="margin: 0; position: relative;
   top: 50%; -ms-transform: translateY(-50%);
   transform: translateY(-50%);">
-<a href="Stat 666 Project/Project Report.pdf" download target="_blank">![](Portfolio Images/general-conference.gif){width=95%}</a>
+<a href="Stat 666 Project/Authorship Prediction.pdf" download target="_blank">![](Portfolio Images/general-conference.gif){width=95%}</a>
 </div>
 </div>
 :::
@@ -46,9 +46,9 @@ output:
 <div style="margin: 0; position: relative;
   top: 50%; -ms-transform: translateY(-50%);
   transform: translateY(-50%);">
-<a href="Stat 666 Project/Project Report.pdf" download target="_blank"><p style="font-size:large; margin-bottom:0">Predicting BYU Speech Authorship (Natural Language Processing)</p></a>
-<p style="margin-bottom:0">**Code:** <a href="Stat 666 Project/clean_analysis.py" download target="_blank">Analysis (.py)</a> | <a href="Stat 666 Project/EDA.py" download target="_blank">Exploratory Data Analysis (.py)</a></p>
-<a href="Stat 666 Project/Final Project.pptx" download target="_blank"><p style="margin-bottom:0">Slides</p></a>
+<a href="Stat 666 Project/Authorship Prediction.pdf" download target="_blank"><p style="font-size:large; margin-bottom:0">Predicting BYU Speech Authorship (Natural Language Processing)</p></a>
+<p style="margin-bottom:0">**Code:** <a href="Stat 666 Project/Authorship Analysis.py" download target="_blank">Analysis (.py)</a> | <a href="Stat 666 Project/Authorship EDA.py" download target="_blank">Exploratory Data Analysis (.py)</a></p>
+<a href="Stat 666 Project/Authorship Prediction Slides.pdf" download target="_blank"><p style="margin-bottom:0">Slides</p></a>
 *Dec 4, 2020*
 </div>
 </div>
@@ -61,7 +61,7 @@ output:
 <div style="margin: 0; position: relative;
   top: 50%; -ms-transform: translateY(-50%);
   transform: translateY(-50%);">
-<a href="Stat 536 Lodgepole Project/Project Report.pdf" download target="_blank">![](Portfolio Images/lodgepole.png){width=95%}</a>
+<a href="Stat 536 Lodgepole Project/Lodgepole Pines.pdf" download target="_blank">![](Portfolio Images/lodgepole.png){width=95%}</a>
 </div>
 </div>
 :::
@@ -70,7 +70,7 @@ output:
 <div style="margin: 0; position: relative;
   top: 50%; -ms-transform: translateY(-50%);
   transform: translateY(-50%);">
-<a href="Stat 536 Lodgepole Project/Project Report.pdf" download target="_blank"><p style="font-size:large; margin-bottom:0">Lodgepole Pine Growth in the High Uintas (Nonlinear Regression with Spatial Correlation)</p></a>
+<a href="Stat 536 Lodgepole Project/Lodgepole Pines.pdf" download target="_blank"><p style="font-size:large; margin-bottom:0">Lodgepole Pine Growth in the High Uintas (Nonlinear Regression with Spatial Correlation)</p></a>
 <p style="margin-bottom:0">**Code:** <a href="Stat 536 Lodgepole Project/forest.r" download target="_blank">Analysis (.R)</a></p>
 <p style="margin-bottom:0">**Other Resources:** <a href="Stat 536 Lodgepole Project/LodgepoleInUintas.csv" download target="_blank">Data (.csv)</a> | <a href="Stat 536 Lodgepole Project/predictgls.R" download target="_blank">Predict GLS Function (.R)</a> | <a href="Stat 536 Lodgepole Project/stdres.gls.R" download target="_blank">Standardized Residuals GLS Function (.R)</a></p>
 *Mar 11, 2020*
@@ -85,7 +85,7 @@ output:
 <div style="margin: 0; position: relative;
   top: 50%; -ms-transform: translateY(-50%);
   transform: translateY(-50%);">
-<a href="Stat 536 Credit Project/Project Report.pdf" download target="_blank">![](Portfolio Images/Credit.png){width=95%}</a>
+<a href="Stat 536 Credit Project/Credit Card Fraud Report.pdf" download target="_blank">![](Portfolio Images/Credit.png){width=95%}</a>
 </div>
 </div>
 :::
@@ -94,10 +94,10 @@ output:
 <div style="margin: 0; position: relative;
   top: 50%; -ms-transform: translateY(-50%);
   transform: translateY(-50%);">
-<a href="Stat 536 Credit Project/Project Report.pdf" download target="_blank"><p style="font-size:large; margin-bottom:0">Credit Card Fraud Detection (Various ML Methods)</p></a>
+<a href="Stat 536 Credit Project/Credit Card Fraud Report.pdf" download target="_blank"><p style="font-size:large; margin-bottom:0">Credit Card Fraud Detection (Various ML Methods)</p></a>
 <p style="margin-bottom:0">**Code:** <a href="Stat 536 Credit Project/CreditFraud.py" download target="_blank">Analysis (.py)</a> | <a href="Stat 536 Credit Project/Boxplots.R" download target="_blank">Exploratory Data Analysis (.R)</a></p>
 <p style="margin-bottom:0">**Other Resources:** <a href="https://www.kaggle.com/mlg-ulb/creditcardfraud/home" target="_blank">Data (.csv)</a> | <a href="Stat 536 Credit Project/probs_knn.csv" download target="_blank">KNN Predicted Probabilities (.csv)</a> | <a href="Stat 536 Credit Project/pred_probs.csv" download target="_blank">Classification Tree Predicted Probabilities (.csv)</a></p>
-<a href="Stat 536 Credit Project/Project Report.pdf" download target="_blank"><p style="margin-bottom:0">Slides</p></a>
+<a href="Stat 536 Credit Project/Credit Card Fraud Report.pdf" download target="_blank"><p style="margin-bottom:0">Slides</p></a>
 *Apr 8, 2020*
 </div>
 </div>
@@ -110,7 +110,7 @@ output:
 <div style="margin: 0; position: relative;
   top: 50%; -ms-transform: translateY(-50%);
   transform: translateY(-50%);">
-<a href="Stat 535 Project/Project Report.pdf" download target="_blank">![](Portfolio Images/linear_models.png){width=95%}</a>
+<a href="Stat 535 Project/Examples of Linear Models.pdf" download target="_blank">![](Portfolio Images/linear_models.png){width=95%}</a>
 </div>
 </div>
 :::
@@ -119,7 +119,7 @@ output:
 <div style="margin: 0; position: relative;
   top: 50%; -ms-transform: translateY(-50%);
   transform: translateY(-50%);">
-<a href="Stat 535 Project/Project Report.pdf" download target="_blank"><p style="font-size:large; margin-bottom:0">Examples of Linear Modeling</p></a>
+<a href="Stat 535 Project/Examples of Linear Models.pdf" download target="_blank"><p style="font-size:large; margin-bottom:0">Examples of Linear Modeling</p></a>
 <p style="margin-bottom:0">**Code:** <a href="Stat 666 Project/Application Portfolio.Rmd" download target="_blank">Analysis (.Rmd)</a></p>
 <p style="margin-bottom:0">**Other Resources:** <a href="Stat 535 Project/fires.csv" download target="_blank">Fire Data (.csv)</a> | <a href="Stat 535 Project/HotChocolate.csv" download target="_blank">Hot Chocolate Data (.csv)</a> | <a href="Stat 535 Project/grades.csv" download target="_blank">Grades Data (.csv)</a> | <a href="Stat 535 Project/MyTemplate.docx" download target="_blank">Word Template (.docx)</a></p>
 *Nov 15, 2019*
@@ -137,5 +137,5 @@ output:
     <a href="https://github.com/casonwight" target="_blank" class="fa fa-github fa-lg fa-fw"></a>
 </p>
 
-<a href="Resume 2020.pdf" download target="_blank"><p style="text-align:center">Download my Resume</p></a>
+<a href="Cason Wight Resume.pdf" download target="_blank"><p style="text-align:center">Download my Resume</p></a>
 <p style="text-align:center; font-size:75%; color:grey">Made by Cason Wight</p>
