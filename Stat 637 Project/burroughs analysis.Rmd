@@ -1,0 +1,856 @@
+---
+title: "Analysis"
+author: "Cason Wight"
+date: "3/19/2021"
+output: word_document
+---
+
+```{r packages, warning=FALSE, message=FALSE}
+library(tidyverse)
+library(rvest)
+library(stringi)
+library(VGAM)
+library(rstan)
+library(rjags)
+library(coda)
+load("bivpois.RData")
+source("lm.bp.R")
+set.seed(1)
+
+rstan_options(auto_write = TRUE)
+rstan_options(javascript=FALSE)
+
+theme_set(theme_light())
+```
+
+```{r}
+if(!file.exists("final_data.csv")){
+  all_text <- read_html("https://www.jordanburroughs.com/wins") %>% 
+  html_nodes("p") %>% 
+  html_text() 
+
+  texts_to_remove <- c("2016-17 season:", 
+                       "2015 beat the streets", 
+                       "2016-17 season:", 
+                       "2017 beat the streets nyc - 74kg/163 lbs:", 
+                       "2017 us world team trials - 74kg/163 lbs", 
+                       "2017 grand prix of spain")
+  
+  usa_texts <- c("hawkeye wc", "bronco wc", "sunkist kids", "new york ac", 
+                 "brickhouse", "nwrtc", "cavalier wc", "nyac", "nittany lion wc",
+                 "titan mercury", "neortc", "vandit wrestling academy", 
+                 "nittany lion wrestling", "wolf pack wc", "usa")
+  
+  temp <- all_text[all_text %>% str_detect(c("WIN|LOSS"))] %>% 
+    paste(collapse="\n") %>% 
+    str_split("\n") %>% 
+    .[[1]] %>% 
+    as.data.frame() %>% 
+    setNames("all_text") %>% 
+    mutate(all_text = str_to_lower(all_text),
+           win = str_detect(all_text, "win"),
+           loss = str_detect(all_text, "loss"),
+           neither = !(win | loss),
+           og_text = all_text) %>% 
+    filter(!neither) %>% 
+    mutate(num_commas = 1 + str_count(all_text, "\\,")) %>% 
+    uncount(num_commas) %>% 
+    mutate(splitted_list = strsplit(all_text, "\\,")) %>% 
+    group_by(all_text) %>% 
+    mutate(match_num = 1:n()) %>% 
+    ungroup() %>% 
+    mutate(text = sapply(1:n(), function(i) splitted_list[[i]][match_num[i]])) %>% 
+    filter(str_detect(text, "-")) %>% 
+    mutate(text = str_remove(text, " ot")) %>% 
+    mutate(text = ifelse(str_sub(text,-1)==")",str_sub(text, end=-8),text),
+           text = str_remove_all(text, paste(texts_to_remove, collapse = "|")),
+           text = str_sub(text, -7)) %>% 
+    separate(text, c("burroughs", "opponent"), "-") %>% 
+    mutate(burroughs = parse_number(burroughs),
+           opponent = parse_number(opponent)) %>% 
+    mutate(winner = ifelse(burroughs > opponent, "burroughs", "opponent"),
+           index = 1:n(),
+           all_text = gsub(".*win ","",all_text),
+           all_text = gsub(".*loss ","",all_text),
+           all_text = str_remove(all_text, "\\(usa\\) "),
+           all_text = str_remove(all_text, "\\(usa "),
+           all_text = str_remove(all_text, "jordan burroughs "),
+           all_text = gsub(".*def ","",all_text),
+           all_text = gsub(".*df ","",all_text),
+           all_text = gsub(".*df\\. ","",all_text),
+           all_text = gsub(".*defeats ","",all_text),
+           all_text = gsub(".*vs\\. ","",all_text),
+           all_text = str_remove(all_text, "tech fall "),
+           all_text = str_remove(all_text, "tech fall"),
+           all_text = gsub(".*pp ","",all_text),
+           all_text = str_remove(all_text, "dec\\. "),
+           all_text = str_remove(all_text, "vpo1 "),
+           all_text = gsub(".*def ","",all_text),
+           all_text = str_remove(all_text, "dec"),
+           all_text = gsub(".*def ","",all_text),
+           all_text = gsub("\\(.*","",all_text),
+           all_text = str_remove(all_text, "10-0"),
+           all_text = str_remove(all_text, "4-0"),
+           all_text = str_remove(all_text, "garden city, ny "),
+           all_text = str_remove(all_text, "lewisburg, pa"),
+           all_text = str_remove(all_text, "ithaca, ny"),
+           all_text = str_remove(all_text, "11-0"),
+           all_text = str_remove(all_text, "5-6")) %>% 
+    filter(!is.na(win)) %>% 
+    mutate(opponent_name = all_text,
+           opponent_name = factor(str_to_title(opponent_name)),
+           winner = factor(str_to_title(winner))) %>%
+    filter(!is.na(burroughs)) %>% 
+    mutate(country = str_extract(og_text, pattern = "(?<=\\().*(?=\\))"),
+           country = str_remove(country, "usa\\)"),
+           country = str_extract(country, "[^\\(]+"),
+           country = str_extract(country, "[^\\)]+"),
+           country = str_replace(country, "-", " "),
+           country = str_replace(country, paste(usa_texts, collapse = "|"), ""),
+           country = sub("^$", "usa", country),
+           opponent_name = opponent_name %>% str_to_lower() %>% str_trim() %>% stri_extract_last_words())
+  
+  temp$year <- rep(2011:2021, c(40,72-40,104-72,127-104,146-127,163-146,184-163,196-184,219-196,223-219,226-223))
+  
+  special_countries = list("136" = "mongolia", 
+                           "137" = "iran",
+                           "140" = "ecuador",
+                           "141" = "poland",
+                           "142" = "ukraine",
+                           "143" = "hungary",
+                           "144" = "iran",
+                           "145" = "russia",
+                           "146" = "mongolia",
+                           "156" = "iran",
+                           "164" = "georgia",
+                           "165" = "russia",
+                           "166" = "iran",
+                           "169" = "usa",
+                           "170" = "usa",
+                           "171" = "usa",
+                           "172" = "japan",
+                           "173" = "usa",
+                           "174" = "usa",
+                           "175" = "usa",
+                           "176" = "spain",
+                           "177" = "kazakhstan",
+                           "178" = "iran",
+                           "179" = "canada",
+                           "180" = "bulgaria",
+                           "181" = "japan",
+                           "182" = "france",
+                           "183" = "uzbekistan",
+                           "184" = "russia",
+                           "185" = "india",
+                           "186" = "japan",
+                           "187" = "georgia",
+                           "188" = "italy",
+                           "189" = "usa",
+                           "190" = "usa",
+                           "191" = "iraq",
+                           "192" = "kazakhstan",
+                           "193" = "italy",
+                           "194" = "iran",
+                           "195" = "russia", 
+                           "196" = "italy",
+                           "197" = "india", 
+                           "198" = "italy",
+                           "199" = "bulgaria",
+                           "200" = "uzbekistan",
+                           "201" = "ecuador",
+                           "202" = "puerto rico",
+                           "203" = "venezuela",
+                           "204" = "canada",
+                           "206" = "usa",
+                           "208" = "usa",
+                           "212" = "prussia",
+                           "214" = "puerto rico",
+                           "217" = "azerbaijan",
+                           "218" = "russia",
+                           "219" = "japan",
+                           "220" = "argentina",
+                           "221" = "cuba",
+                           "222" = "puerto rico",
+                           "223" = "usa",
+                           "224" = "kazakhstan",
+                           "225" = "india",
+                           "226" = "italy")
+  
+  for(name in names(special_countries)){
+    temp$country[as.numeric(name)] <- special_countries[[name]]
+  }
+  
+  final_data <- temp %>% 
+    dplyr::select(year, opponent_name, winner, burroughs, opponent, country) %>% 
+    mutate(country = factor(country))
+  
+  olympians_2016 <-
+    "https://en.wikipedia.org/wiki/Wrestling_at_the_2016_Summer_Olympics_%E2%80%93_Men%27s_freestyle_74_kg" %>% 
+    read_html() %>% 
+    html_nodes("tbody") %>% 
+    html_table() %>% 
+    .[[9]] %>% 
+    pull(Athlete) %>% 
+    str_replace("\\(.*", "") %>% 
+    str_replace("ó", "o") %>% 
+    str_replace("ö", "o") %>% 
+    stri_extract_last_words() %>% 
+    str_to_lower() %>% 
+    str_trim()
+  
+  olympians_2012 <-
+    "https://en.wikipedia.org/wiki/Wrestling_at_the_2012_Summer_Olympics_%E2%80%93_Men%27s_freestyle_74_kg" %>% 
+    read_html() %>% 
+    html_nodes("tbody") %>% 
+    html_table() %>% 
+    .[[9]] %>% 
+    pull(Athlete) %>% 
+    str_replace("\\(.*", "") %>% 
+    str_replace("ó", "o") %>% 
+    str_replace("ö", "o") %>% 
+    stri_extract_last_words() %>% 
+    str_to_lower() %>% 
+    str_trim()
+  
+  
+  olympians_2012 <-
+    "https://en.wikipedia.org/wiki/Wrestling_at_the_2012_Summer_Olympics_%E2%80%93_Men%27s_freestyle_74_kg" %>% 
+    read_html() %>% 
+    html_nodes("tbody") %>% 
+    html_table() %>% 
+    .[[9]] %>% 
+    pull(Athlete) %>% 
+    str_replace("\\(.*", "") %>% 
+    str_replace("ó", "o") %>% 
+    str_replace("ö", "o") %>% 
+    stri_extract_last_words() %>% 
+    str_to_lower() %>% 
+    str_trim()
+  
+  olympians_2008 <-
+    "https://en.wikipedia.org/wiki/Wrestling_at_the_2008_Summer_Olympics_%E2%80%93_Men%27s_freestyle_74_kg" %>% 
+    read_html() %>% 
+    html_nodes("tbody") %>% 
+    html_table() %>% 
+    .[[9]] %>% 
+    pull(Athlete) %>% 
+    str_replace("\\(.*", "") %>% 
+    str_replace("Ș", "S") %>% 
+    str_replace("ü", "u") %>%
+    str_replace("é", "e") %>% 
+    stri_extract_last_words() %>% 
+    str_to_lower() %>% 
+    str_trim()
+  
+  olympians_2004 <-
+    "https://en.wikipedia.org/wiki/Wrestling_at_the_2004_Summer_Olympics_%E2%80%93_Men%27s_freestyle_74_kg" %>% 
+    read_html() %>% 
+    html_nodes("tbody") %>% 
+    html_table() %>% 
+    .[[21]] %>% 
+    pull(Athlete) %>% 
+    str_replace("\\(.*", "") %>% 
+    stri_extract_last_words() %>% 
+    str_to_lower() %>% 
+    str_trim()
+
+  final_data <- final_data %>% 
+    mutate(olympian_2004 = opponent_name %in% olympians_2004,
+           olympian_2008 = opponent_name %in% olympians_2008,
+           olympian_2012 = opponent_name %in% olympians_2012,
+           olympian_2016 = opponent_name %in% olympians_2016,
+           olympian = olympian_2004 | olympian_2008 | olympian_2012 | olympian_2016)
+  
+  
+  write_csv(final_data, "final_data.csv")
+} else{
+  final_data <- read_csv("final_data.csv")
+}
+
+```
+
+```{r}
+final_data %>% 
+  ggplot(aes(x = jitter(year), y = jitter(burroughs))) + 
+  geom_point(aes(y = jitter(opponent), color = "Opponent")) +
+  geom_smooth(aes(y = jitter(opponent), color = "Opponent"),method = "lm", se = FALSE, formula = 'y~x') + 
+  geom_point(aes(color = "Burroughs")) + 
+  geom_smooth(aes(color = "Burroughs"), method = "loess", se = FALSE, formula = 'y~x') + 
+  labs(x = "Year", y = "Points Scored", color = "Wrestler", 
+       title = "Points Scored") + 
+  theme(legend.position = "bottom") + 
+  scale_color_discrete(direction = -1, guide = guide_legend(nrow = 2))
+
+# For presentation
+#ggsave("Points_time.png", height = 3, width = 6)
+# For paper
+ggsave("Points_time.png", height = 3, width = 3)
+
+
+final_data %>% 
+  ggplot(aes(x = jitter(year), y = 1-(as.numeric(winner)-1))) + 
+  geom_point() + 
+  geom_smooth(se = FALSE, method = "loess", formula = "y~x") + 
+  labs(y = "Pr(Burroughs wins | Year)", x = "Year", 
+       title = "Burroughs' Win Percentage") + 
+  scale_y_continuous(labels = scales::percent)
+# For presentation
+#ggsave("win_perc.png", height = 4, width = 8)
+# For paper
+ggsave("win_perc.png", height = 3, width = 3)
+
+
+final_data %>% 
+  mutate(winner = factor(winner, c("Opponent", "Burroughs"))) %>% 
+  group_by(country, winner) %>% 
+  summarize(n = n()) %>%
+  group_by(country) %>% 
+  mutate(total_n = sum(n)) %>% 
+  ungroup() %>% 
+  mutate(country = fct_reorder(country, total_n)) %>% 
+  filter(n > 5) %>% 
+  ggplot(aes(y=country, x = n, fill = winner)) + 
+  geom_bar(stat = "identity", color = "black") + 
+  labs(x = "Number of Matches", y = "Country of Opponent", fill = "Winner",
+       title = "Opponent Nationalities") + 
+  theme(legend.position = "bottom") + 
+  scale_fill_discrete(guide = guide_legend(nrow = 2))
+# For presentation
+#ggsave("nationalities.png", height = 3, width = 6)
+# For paper
+ggsave("nationalities.png", height = 3, width = 3)
+
+
+final_data %>% 
+  group_by(country) %>% 
+  filter(n()>7) %>% 
+  ungroup() %>% 
+  pivot_longer(c(burroughs, opponent)) %>% 
+  mutate(name = factor(name, c("opponent", "burroughs"))) %>% 
+  ggplot(aes(y = country, x = as.numeric(value), fill = name)) + 
+  geom_boxplot() + 
+  labs(x = "Number of Points Scored", y = "Country of Opponent", 
+       title = "Score Distributions",
+       fill = "Wrestler") + 
+  theme(legend.position = "bottom") + 
+  scale_fill_discrete(guide = guide_legend(nrow = 2))
+# For presentation
+#ggsave("points_nation.png", height = 4, width = 8)
+# For paper
+ggsave("points_nation.png", height = 3, width = 3)
+
+
+final_data %>% 
+  pivot_longer(c(burroughs, opponent)) %>% 
+  mutate(name = factor(name, c("opponent", "burroughs"))) %>% 
+  ggplot(aes(x = as.numeric(value), fill = name)) + 
+  geom_histogram(bins = 15, position = "dodge", color = "black") + 
+  labs(x = "Number of Points Scored", y = "Count",
+       title = "Points Scored", fill = "Wrestler") + 
+  theme(legend.position = "bottom")
+ggsave("points.png", height = 4, width = 4)
+
+final_data %>% 
+  pivot_longer(c(burroughs, opponent)) %>% 
+  mutate(name = factor(name, c("opponent", "burroughs"))) %>% 
+  ggplot(aes(y = olympian, x = as.numeric(value), fill = name)) + 
+  geom_boxplot() + 
+  labs(x = "Number of Points Scored", y = "Opponent is Olympian", 
+       title = "Score Distributions",
+       fill = "Wrestler") + 
+  theme(legend.position = "bottom") + 
+  scale_fill_discrete(guide = guide_legend(nrow = 2))
+```
+
+```{r pulling_data, warning=FALSE, message=FALSE}
+final_data <- read_csv("final_data.csv")
+
+data <- final_data %>% 
+  mutate(country = fct_lump(country, 6))
+cntry_levels <- data %>% 
+                   group_by(country) %>% 
+                   summarize(n = n()) %>% 
+                   arrange(-n) %>%
+                   pull(country) %>% 
+                   as.character()
+
+data <- data %>% 
+  mutate(country = fct_relevel(country, cntry_levels))
+
+x1 <- cbind("(intercept)"=1,model.matrix(~ -1 + scale(year) + olympian + country, data = data))[,-3]
+x2 <- cbind("(intercept)"=1,model.matrix(~ -1 + scale(year) + olympian + country, data = data))[,-3]
+x3 <- cbind("(intercept)"=1,model.matrix(~ -1 + scale(year), data = data))
+
+```
+
+
+```{r bayesian_model, warning=FALSE, message=FALSE}
+if(!file.exists("bayes_samples.rds") | !file.exists("bayes_results.rds")){
+  jags_data <- list(burroughs = data %>% pull(burroughs), 
+                  opponent = data %>% pull(opponent),
+                  x1 = x1, x2 = x2, x3 = x3,
+                  N = nrow(x1), 
+                  k1 = ncol(x1), 
+                  k2 = ncol(x2), 
+                  k3 = ncol(x3),
+                  mu.beta1 = rep(0,ncol(x1)),
+                  tau.beta1 = diag(ncol(x1))/10000,
+                  mu.beta2 = rep(0,ncol(x2)),
+                  tau.beta2 = diag(ncol(x2))/10000,
+                  mu.beta3 = rep(0,ncol(x3)),
+                  tau.beta3 = diag(ncol(x3))/10000)
+
+  model.string <- "
+    model {
+          ## Likelihood
+      for(i in 1:N){
+        burroughs[i] ~ dpois(lambda1[i] + lambda3[i])
+        opponent[i] ~ dpois(lambda2[i] + lambda3[i])
+        
+        log(lambda1[i]) <- eta1[i]
+        log(lambda2[i]) <- eta2[i]
+        log(lambda3[i]) <- eta3[i]
+        
+        eta1[i] <- inprod(beta1[],x1[i,])
+        eta2[i] <- inprod(beta2[],x2[i,])
+        eta3[i] <- inprod(beta3[],x3[i,])
+        }     
+      ## Priors 
+      beta1 ~ dmnorm(mu.beta1,tau.beta1)  # multivariate Normal prior
+      beta2 ~ dmnorm(mu.beta2,tau.beta2)  # multivariate Normal prior
+      beta3 ~ dmnorm(mu.beta3,tau.beta3)  # multivariate Normal prior
+  }
+  "
+  model.spec <- textConnection(model.string)
+  
+  jags <- jags.model(model.spec,
+                     data = jags_data,
+                     n.chains=5,
+                     n.adapt=5000)
+  update(jags, n.burn = 100000)
+  results <- coda.samples(jags, variable.names = c("beta1", "beta2", "beta3"), 
+                          n.iter = 3*75000,
+                          thin = 90)
+  
+  sims <- as.matrix(results)[,]
+  saveRDS(sims, "bayes_samples.rds")
+  saveRDS(results, 'bayes_results.rds')
+} else{
+  sims <- readRDS("bayes_samples.rds")
+  results <- readRDS("bayes_results.rds")
+}
+
+```
+
+
+
+```{r results}
+effect_types <- c("Burroughs'", "Opponent's", "Joint")
+for(i in 1:3){
+  vec <- paste0("beta",i)
+  columns <- "x" %>% 
+    paste0(i) %>% 
+    get() %>% 
+    colnames()
+  
+  samps <- sims %>% 
+    as.data.frame() %>% 
+    select(contains(vec)) %>% 
+    setNames(columns) %>% 
+    mutate(chain = as.factor(rep(1:5, each = 2500))) %>% 
+    pivot_longer(!contains("chain")) %>% 
+    group_by(chain, name) %>% 
+    mutate(n = row_number()) %>% 
+    mutate(name = factor(name, levels = columns))
+  
+  eff_sizes <- sims %>% 
+    as.data.frame() %>% 
+    select(contains(vec)) %>% 
+    setNames(columns) %>% 
+    apply(2,effectiveSize) %>% 
+    data.frame("name"=columns) %>% 
+    setNames(c("EffectiveSize", "name")) %>% 
+    mutate(y=1, x=40, EffectiveSize = sprintf("Eff N: %3.0f", EffectiveSize))
+  
+  gelman_diag <- results %>% 
+    gelman.diag() %>% 
+    .$psrf %>% 
+    as.data.frame() %>% 
+    filter(str_detect(row.names(.), vec)) %>% 
+    select("Point est.") %>% 
+    mutate(name = columns,
+           x = 0) %>% 
+    left_join(samps %>% group_by(name) %>% summarize(y = min(value)), by = "name") %>% 
+    mutate("Point est." = sprintf("Rhat: %3.4f", `Point est.`))
+  
+  trace_plots <- samps %>% 
+    ggplot(aes(x=n, y = value)) + 
+    geom_line(aes(color = chain), show.legend = FALSE) + 
+    geom_label(data = gelman_diag, aes(label = `Point est.`, x=x, y=y), hjust = 0, vjust = 0, size = 3) + 
+    facet_wrap(~name, scales = "free_y") + 
+    labs(title="Trace Plots for Effects", subtitle = paste(effect_types[i], "Points"),
+         y = "Estimated Effect", x = "Index") + 
+    theme(axis.text.x = element_text(angle = 45, vjust = 1)) +
+    scale_x_continuous(labels=scales::comma_format())
+  
+  acf_plots <- sapply(columns, function(spec_name){
+    samps %>% 
+      filter(name == spec_name) %>% 
+      pull(value) %>% 
+      acf(plot=FALSE) %>% 
+      with(data.frame(lag, acf)) %>% 
+      pull(acf)
+  }) %>% 
+    as.data.frame() %>% 
+    mutate(lag = row_number()-1) %>% 
+    pivot_longer(!contains("lag")) %>% 
+    mutate(name = factor(name, levels = columns)) %>% 
+    ggplot(aes(x = lag, y = value)) + 
+    geom_col() + 
+    geom_label(data = eff_sizes, aes(label = EffectiveSize, x=x, y=y), hjust = 1, vjust = 1, size = 3) + 
+    facet_wrap(~name, scales = "free_y") + 
+    labs(title="ACF Plots for Samples", subtitle = paste(effect_types[i], "Points"),
+         x = "Lag", y = "Auto-Correlation")
+    
+  density_plots <- samps %>% 
+    ggplot(aes(x = value)) +
+    geom_density() +
+    facet_wrap(~name, scales = "free_y") + 
+    labs(title="Density Plots for Effects", subtitle = paste(effect_types[i], "Points"),
+         y = "Density", x = "Estimated Effect")
+  
+  print(trace_plots)
+  ggsave(paste0("trace_",i,".png"), width = 4, height = 4)
+  print(acf_plots)
+  ggsave(paste0("acf_",i,".png"), width = 4, height = 4)
+  print(density_plots)
+  ggsave(paste0("density_",i,".png"), width = 4, height = 4)
+  
+}
+
+
+
+```
+
+```{r}
+beta1 <- sims %>% 
+  as.data.frame() %>% 
+  select(contains("beta1")) %>% 
+  as.matrix()
+lambda1s <- (x1 %*% t(beta1)) %>% exp() %>% rowMeans()
+
+beta2 <- sims %>% 
+  as.data.frame() %>% 
+  select(contains("beta2")) %>% 
+  as.matrix()
+lambda2s <- (x2 %*% t(beta2)) %>% exp() %>% rowMeans()
+
+beta3 <- sims %>% 
+  as.data.frame() %>% 
+  select(contains("beta3")) %>% 
+  as.matrix()
+lambda3s <- (x3 %*% t(beta3)) %>% exp() %>% rowMeans()
+
+
+sqrt(mean((lambda1s + lambda3s - data %>% pull(burroughs))^2))
+sqrt(mean((lambda2s + lambda3s - data %>% pull(opponent))^2))
+
+```
+
+
+```{r freq_model_setup}
+formatted_data <- cbind(x = final_data$burroughs, y = final_data$opponent, x1) %>% 
+  as.data.frame() %>% 
+  select(-"(intercept)")
+
+hush=function(code){
+  sink("NUL") # use /dev/null in UNIX
+  tmp = code
+  sink()
+  return(tmp)
+}
+```
+
+
+```{r freq_model_selection}
+test_deviance <- function(log.like.full, log.like.red, pars.full, pars.red){
+  pchisq(2 * (log.like.full - log.like.red), pars.full - pars.red, lower.tail = FALSE)
+}
+
+# Simple Model
+simple_mod_loglike <- hush(suppressWarnings(lm.bp(x~1, y~1, l3 = ~1, data=formatted_data)))$loglikelihood %>% tail(1)
+simple_mod_pars <- 3
+
+# Just year on burroughs model
+year_1_mod_loglike <- hush(suppressWarnings(lm.bp(x~year, y~1, l3 = ~1, data=formatted_data)))$loglikelihood %>% tail(1)
+year_1_mod_pars <- 4
+
+# difference in fit is significant
+test_deviance(year_1_mod_loglike, simple_mod_loglike, year_1_mod_pars, simple_mod_pars)
+
+# Year and olympian on burroughs model
+year_olympian_1_mod_loglike <- hush(suppressWarnings(lm.bp(x~year + olympianTRUE, y~1, l3 = ~1, data=formatted_data)))$loglikelihood %>% tail(1)
+year_olympian_1_mod_pars <- 5
+
+# difference in fit is significant
+test_deviance(year_olympian_1_mod_loglike, year_1_mod_loglike, year_olympian_1_mod_pars, year_1_mod_pars)
+
+# Year and olympian on burroughs model and year on both
+year_olympian_1_year_3_mod_loglike <- hush(suppressWarnings(lm.bp(x~year + olympianTRUE, y~1, l3 = ~year, data=formatted_data)))$loglikelihood %>% tail(1)
+year_olympian_1_year_3_mod_pars <- 6
+
+# difference in fit is significant
+test_deviance(year_olympian_1_year_3_mod_loglike, year_olympian_1_mod_loglike, year_olympian_1_year_3_mod_pars, year_olympian_1_mod_pars)
+
+# Year and olympian on burroughs model and year and olympian on both
+year_olympian_1_year_olympian_3_mod_loglike <- hush(suppressWarnings(lm.bp(x~year + olympianTRUE, y~1, l3 = ~year + olympianTRUE, data=formatted_data)))$loglikelihood %>% tail(1)
+year_olympian_1_year_olympian_3_mod_pars <- 7
+
+# difference in fit is not significant
+test_deviance(year_olympian_1_year_olympian_3_mod_loglike, year_olympian_1_year_3_mod_loglike, year_olympian_1_year_olympian_3_mod_pars, year_olympian_1_year_3_mod_pars)
+
+# Year and olympian and country on burroughs model and year on both
+year_olympian_country_1_year_3_mod_loglike <- hush(suppressWarnings(lm.bp(x~., y~1, l3 = ~year, data=formatted_data)))$loglikelihood %>% tail(1)
+year_olympian_country_1_year_3_mod_pars <- 12
+
+# difference in fit is significant
+test_deviance(year_olympian_country_1_year_3_mod_loglike, year_olympian_1_year_3_mod_loglike, year_olympian_country_1_year_3_mod_pars, year_olympian_1_year_3_mod_pars)
+
+# Year and olympian and country on burroughs model and year on both and year on opponent
+year_olympian_country_1_year_3_year_2_mod_loglike <- hush(suppressWarnings(lm.bp(x~., y~year, l3 = ~year, data=formatted_data)))$loglikelihood %>% tail(1)
+year_olympian_country_1_year_3_year_2_mod_pars <- 13
+
+# difference in fit is significant
+test_deviance(year_olympian_country_1_year_3_year_2_mod_loglike, year_olympian_country_1_year_3_mod_loglike, year_olympian_country_1_year_3_year_2_mod_pars, year_olympian_country_1_year_3_mod_pars)
+
+# Year and olympian and country on burroughs model and year on both and year and olympian on opponent
+year_olympian_country_1_year_3_year_olympian_2_mod_loglike <- hush(suppressWarnings(lm.bp(x~., y~year + olympianTRUE, l3 = ~year, data=formatted_data)))$loglikelihood %>% tail(1)
+year_olympian_country_1_year_3_year_olympian_2_mod_pars <- 14
+
+# difference in fit is significant
+test_deviance(year_olympian_country_1_year_3_year_olympian_2_mod_loglike, year_olympian_country_1_year_3_year_2_mod_loglike, 
+              year_olympian_country_1_year_3_year_olympian_2_mod_pars, year_olympian_country_1_year_3_year_2_mod_pars)
+
+# Year and olympian and country on burroughs model and year on both and year and olympian and country on opponent
+year_olympian_country_1_year_3_year_olympian_country_2_mod_loglike <- hush(suppressWarnings(lm.bp(x~., y~., l3 = ~year, data=formatted_data)))$loglikelihood %>% tail(1)
+year_olympian_country_1_year_3_year_olympian__country2_mod_pars <- 20
+
+# difference in fit is significant
+test_deviance(year_olympian_country_1_year_3_year_olympian_country_2_mod_loglike, year_olympian_country_1_year_3_year_olympian_2_mod_loglike, 
+              year_olympian_country_1_year_3_year_olympian__country2_mod_pars, year_olympian_country_1_year_3_year_olympian_2_mod_pars)
+
+# Year and olympian and country on burroughs model and year on both and year and olympian and country on opponent
+year_olympian_country_1_year_country_3_year_olympian_country_2_mod_loglike <- hush(suppressWarnings(lm.bp(x~., y~., l3 = ~ -olympianTRUE, data=formatted_data)))$loglikelihood %>% tail(1)
+year_olympian_country_1_year_country_3_year_olympian__country2_mod_pars <- 26
+
+# difference in fit is not significant
+test_deviance(year_olympian_country_1_year_country_3_year_olympian_country_2_mod_loglike, year_olympian_country_1_year_3_year_olympian_country_2_mod_loglike, 
+              year_olympian_country_1_year_country_3_year_olympian__country2_mod_pars, year_olympian_country_1_year_3_year_olympian__country2_mod_pars)
+
+# Final model:
+# log(lambda1) = beta10 + year * beta11 + olympianTRUE * beta12 + usa * beta13 + russia * beta14 + iran * beta15 + japan * beta16 + uzbekistan * beta17 + cuba * beta18
+# log(lambda2) = beta20 + year * beta21 + olympianTRUE * beta22 + usa * beta23 + russia * beta24 + iran * beta25 + japan * beta26 + uzbekistan * beta27 + cuba * beta28
+# log(lambda3) = beta30 + year * beta31
+
+```
+
+
+```{r final_freq_model}
+freq_model <- hush(suppressWarnings(lm.bp(x~., y~., l3 = ~year, data=formatted_data %>% mutate(year = `scale(year)`) %>% select(-`scale(year)`))))
+freq_model_2 <- hush(suppressWarnings(lm.bp(x~poly(year,2)+olympianTRUE+countryusa+countryrussia+countryiran+countryjapan+countryuzbekistan+countrycuba, y~., l3 = ~year, data=formatted_data)))
+
+print(test_deviance(freq_model_2$loglikelihood %>% tail(1), freq_model$loglikelihood %>% tail(1), 2,1))
+
+
+simple_model <- hush(suppressWarnings(lm.bp(x~1, y~1, zeroL3 = TRUE, data=formatted_data)))
+
+
+log_like_sat <- sum(dpois(final_data$burroughs, final_data$burroughs, log = TRUE)) + sum(dpois(final_data$opponent, final_data$opponent, log = TRUE))
+deviance <- 2 * (log_like_sat - freq_model$loglikelihood %>% tail(1))
+
+# Test against saturated
+pchisq(deviance, nrow(final_data) - freq_model$coefficients %>% length(), lower.tail = FALSE)
+
+# Test against null
+pchisq(2*(freq_model$loglikelihood %>% tail(1) - simple_model$loglikelihood %>% tail(1)), freq_model$coefficients %>% length() - simple_model$coefficients %>% length(), lower.tail = FALSE)
+
+
+(final_data$burroughs - (freq_model$lambda1 + freq_model$lambda3)) %>% 
+  .^2 %>% 
+  mean() %>% 
+  sqrt()
+
+(final_data$opponent - (freq_model$lambda2 + freq_model$lambda3)) %>% 
+  .^2 %>% 
+  mean() %>% 
+  sqrt()
+
+(freq_model$lambda1 + freq_model$lambda3)%>% 
+  mean() %>% 
+  sqrt()
+
+(freq_model$lambda2 + freq_model$lambda3)%>% 
+  mean() %>% 
+  sqrt()
+
+
+```
+
+
+
+```{r _all_Results}
+effect_types <- c("Burroughs", "Opponent", "Both")
+effect_types2 <- c("Burroughs'", "Opponent's", "Joint")
+
+for(i in 1:3){
+  vec <- paste0("beta",i)
+  columns <- "x" %>% 
+    paste0(i) %>% 
+    get() %>% 
+    colnames()
+  
+  samps <- sims %>% 
+    as.data.frame() %>% 
+    select(contains(vec))
+  
+  bayes_means <- apply(samps, 2, mean)
+  bayes_low <- apply(samps, 2, quantile, .025)
+  bayes_upp <- apply(samps, 2, quantile, .975)
+  
+  estimates <- freq_model$coefficients %>% 
+    as.data.frame() %>% 
+    setNames("Freq. Est.") %>% 
+    filter(str_detect(row.names(.), paste0("(l",i,")"))) %>% 
+    mutate(effects = row.names(.) %>% 
+             str_to_lower() %>% 
+             str_remove( paste0("l",i)) %>% 
+             str_remove(":") %>% 
+             str_remove("\\(\\)") %>% 
+             factor(levels=str_to_lower(rev(columns)))) %>% 
+    arrange(effects) %>% 
+    mutate(effects = effects %>% 
+             as.character() %>% 
+             str_remove("country") %>% 
+             str_remove("true") %>% 
+             str_to_title()) %>% 
+    mutate(effects = replace_na(effects, "Year") %>%
+             factor(levels = rev(c("(Intercept)", "Year")))) %>% #, "Olympian", "Usa", "Russia", "Iran", "Japan", "Uzbekistan", "Cuba")))) %>% 
+    arrange(effects) %>% 
+    #filter(!str_detect(effects,"ntercept")) %>% 
+    mutate("Bayes. Est." = bayes_means %>% rev(),
+           "Bayes. Lower" = bayes_low %>% rev(),
+           "Bayes. Upper" = bayes_upp %>% rev())
+  
+  effects_plot <- estimates %>% 
+    ggplot(aes(y = effects)) +
+    geom_errorbar(aes(xmin=`Bayes. Lower`, xmax = `Bayes. Upper`)) + 
+    geom_point(aes(x = `Bayes. Est.`, color = "Bayesian (SE Loss)", shape = "Bayesian (SE Loss)"), size = 3) +
+    geom_point(aes(x = `Freq. Est.`, color = "Frequentist", shape = "Frequentist"), size = 3) + 
+    labs(x = "Estimated Effect on log(Mean Points)",
+         y = "Covariate",
+         title = paste0("Effects on ",effect_types2[i]," Points"),
+         color = "Estimator",
+         shape = "Estimator") + 
+    theme(legend.position = "bottom")
+    
+  print(effects_plot)
+  ggsave(paste0("results_lambda_",i,".png"), height = 2.5, width = 4)
+}
+
+
+estimates <- freq_model$coefficients %>% 
+    as.data.frame() %>% 
+    setNames("Freq. Est.") %>% 
+  mutate(effects = row.names(.) %>% 
+             str_to_lower() %>% 
+             as.character() %>% 
+             str_remove("country") %>% 
+             str_remove("true") %>% 
+             str_to_title() %>% 
+             str_remove("\\(") %>% 
+             str_remove("\\)"),
+         lambda = factor(paste0("lambda",substr(effects, 2, 2))),
+         effects = substr(effects, 4, 100))
+
+columns <- "x" %>% 
+    paste0(1) %>% 
+    get() %>% 
+    colnames() %>%
+    str_remove("country") %>% 
+    str_remove("TRUE") %>% 
+    str_to_title() %>% 
+    str_replace("Scale\\(Year\\)", "Year")
+
+estimates %>% 
+  mutate(effects = factor(effects, levels = rev(columns))) %>% 
+  ggplot(aes(y = effects, x = `Freq. Est.`, fill = lambda)) + 
+  geom_col(position = "dodge") + 
+  labs(fill = "", title = "Estimated Effects in Frequentist Model", x = "Effect on log(Mean points scored)", y = "Covariate")
+
+```
+
+```{r prediction_Dake}
+bayes_x1 <- bayes_x2 <- cbind(1, (2021 - mean(final_data$year)) / sd(final_data$year), 1, 1, 0, 0, 0, 0, 0)
+bayes_x3 <- matrix(bayes_x1[,1:2], nrow = 1)
+
+lambda1 <- as.numeric(bayes_x1 %*% t(sims[,1:9]))
+lambda2 <- as.numeric(bayes_x2 %*% t(sims[,10:18]))
+lambda3 <- as.numeric(bayes_x3 %*% t(sims[,19:20]))
+
+
+preds <- data.frame(burroughs_mu = pmin(exp(lambda1) + exp(lambda3), 15),
+           opponent_mu = pmin(exp(lambda2) + exp(lambda3), 15),
+           burroughs_points = pmin(rpois(nrow(sims), exp(lambda1) + exp(lambda3)),15),
+           opponent_points = pmin(rpois(nrow(sims), exp(lambda2) + exp(lambda3)),15)) 
+
+
+freq_lambda1 <- exp(sum(freq_model$coefficients[c(1,6,8,9)] * c(1,1,1,(2021 - mean(final_data$year)) / sd(final_data$year))))
+freq_lambda2 <- exp(sum(freq_model$coefficients[c(10,15,17,18)] * c(1,1,1,(2021 - mean(final_data$year)) / sd(final_data$year))))
+freq_lambda3 <- exp(sum(freq_model$coefficients[19:20] * c(1,(2021 - mean(final_data$year)) / sd(final_data$year))))
+
+
+
+preds %>% 
+  ggplot(aes()) +
+  geom_histogram(aes(y = ..density.., x = opponent_points, fill = "Opponent"), binwidth = 1, alpha = .5, color = "black", show.legend = FALSE) + 
+  geom_histogram(aes(y = ..density.., x = burroughs_points, fill = "Burroughs"), binwidth = 1, alpha = .5, color = "black", show.legend = FALSE) +
+  geom_density(aes(x = burroughs_mu, color = "Burroughs"), lwd = 1) + 
+  geom_density(aes(x = opponent_mu, color = "Opponent"), lwd = 1) + 
+  geom_vline(aes(xintercept = freq_lambda1 + freq_lambda3, color = "Burroughs", lty = "Frequentist"), lwd = 1) +
+  geom_vline(aes(xintercept = freq_lambda2 + freq_lambda3, color = "Opponent", lty = "Frequentist"), lwd = 1) +
+  # geom_vline(aes(xintercept = mean(burroughs_mu), color = "Burroughs", lty = "Mean (Bayesian)"), lwd = 1) +
+  # geom_vline(aes(xintercept = mean(opponent_mu), color = "Opponent", lty = "Mean (Bayesian)"), lwd = 1) +
+  # geom_vline(aes(xintercept = quantile(burroughs_mu, .025), color = "Burroughs", lty = "Bayesian 95% CI")) +
+  # geom_vline(aes(xintercept = quantile(burroughs_mu, .975), color = "Burroughs", lty = "Bayesian 95% CI")) +
+  # geom_vline(aes(xintercept = quantile(opponent_mu, .025), color = "Opponent", lty = "Mean 95% CI")) +
+  # geom_vline(aes(xintercept = quantile(opponent_mu, .975), color = "Opponent", lty = "Mean 95% CI")) +
+  # geom_vline(aes(xintercept = quantile(burroughs_points, .025), color = "Burroughs", lty = "Pred 95% CI")) +
+  # geom_vline(aes(xintercept = quantile(burroughs_points, .975), color = "Burroughs", lty = "Pred 95% CI")) +
+  # geom_vline(aes(xintercept = quantile(opponent_points, .025), color = "Opponent", lty = "Pred 95% CI")) +
+  # geom_vline(aes(xintercept = quantile(opponent_points, .975), color = "Opponent", lty = "Pred 95% CI")) +
+  labs(y = "Probability Density", x = "Points Scored",
+       fill = "Predicted Points",
+       color = "Estimated Mean",
+       title = "Predicted Points for Burroughs vs American Olympian in 2021",
+       subtitle = "Kyle Dake, ranked no.1, is an outlier",
+       linetype = "") + 
+  xlim(c(0,10))
+
+preds %>% 
+  ggplot(aes()) +
+  geom_histogram(aes(y = ..density.., x = burroughs_points-opponent_points, fill = "Posterior Predicted Values"), binwidth = 1, alpha = .5, color = "black") + 
+  geom_density(aes(x = burroughs_mu-opponent_mu, color = "Bayesian Mean"), lwd = 1) + 
+  geom_vline(aes(xintercept = freq_lambda1-freq_lambda2, color = "Frequentist Mean")) + 
+  geom_point(data = data.frame(x = -c(3,1), y = c(0,0)), aes(x = x, y=y, color = "Observed Result"), shape = "x", size = 6) + 
+  scale_fill_discrete() + 
+  labs(x = "Burroughs points - Opponent points", 
+       y = "Probability Density",
+       title = "Predicted Burroughs Point Lead",
+       fill = "",
+       color = "") + 
+  guides(color = guide_legend(override.aes = list(shape = 19) ))
+ggsave("pred.png", height = 2, width = 5)
+
+```
+
+
