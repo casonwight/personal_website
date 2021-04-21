@@ -15,7 +15,7 @@ output:
 </style>
 
 ![](stock_photo.png){width=100%,margin=0,padding=0}
-<h4>I am a data scientist looking to balance machine learning and statistical theory to deliver interpretable solutions. I am seeking positions that match research to application.</h4>
+<h4>I am a data scientist, balancing machine learning and statistical theory to deliver interpretable solutions. I try to link research to useful application.</h4>
 
 ***
 

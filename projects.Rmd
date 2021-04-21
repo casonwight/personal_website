@@ -6,6 +6,8 @@ output:
       in_header: "favicon.html" 
 ---
 
+These projects are some highlights from personal projects and schoolwork. All projects include a formal report and code, and most also include slides from a presentation.
+
 :::: {.col-md-12}
 ::: {.col-md-5 style="height:200px"}
 <div style="height:200px; position:relative">
