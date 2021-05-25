@@ -15,11 +15,25 @@ output:
 </style>
 
 ![](stock_photo.png){width=100%,margin=0,padding=0}
-<h4>I am a data scientist, balancing machine learning and statistical theory to deliver interpretable solutions. I try to link research to useful application.</h4>
+<h4>I am a data scientist; I try to balance machine learning and statistical theory to deliver interpretable solutions. I am excited about linking current research to useful applications.</h4>
 
 ***
 
 ###  Experience  
+
+#####  **Northrop Grumman**
+:::: {.columns}
+::: {.column width="80%"}
+**Data Scientist**  
+*Roy, UT*  
+•  Layered filtering (particle filter and unscented kalman filter) algorithms on MCMC to obtain Bayesian estimate of the state of mechanical equipment and predict end-of-life  
+:::
+::: {.column width="20%"}
+<div align="right">Spring 2021 to Present</div>
+:::
+::::
+  
+<p></p>
   
 #####  **Xandr** (Warner Media Company)
 :::: {.columns}
@@ -28,8 +42,7 @@ output:
 *Portland, OR*  
 •  Constructed an algorithm that estimates theoretical optimal price floors in advertisement auctions  
 •  Used algorithm to run a weeklong experiment on bidder reactions to price floors (14 mil. impressions)  
-•  Wrote a statistical analysis that was presented to the data science team, executives, and clients  
-•  Analysis will continue to be used for next steps in research, potentially leading to 5% revenue gains  
+•  Analysis showed that the theoretical optimum led to 4% revenue losses; RL was suggested as an alternative  
 :::
 ::: {.column width="20%"}
 <div align="right">Summer 2020</div>
@@ -46,7 +59,7 @@ output:
 *Provo, UT*  
 :::
 ::: {.column width="20%"}
-<div align="right">Fall 2017 to Present</div>
+<div align="right">Fall 2017 to April 2021</div>
 :::
 ::::
 :::: {.columns}
@@ -240,7 +253,7 @@ output:
 Classification/Regression Trees, Deep learning, Support Vector Machines, Naive Bayes, K-nearest neighbors, Linear/Quadratic Discriminant Analysis, K-Means, Agglomerative Clustering, Regularization, Principal Component Analysis,  Random Forests, Kernel Density Estimation, and SARIMA
 
 #### Other Tools  
-Exposure to Hadoop, Databricks, h2o, and TensorFlow
+Exposure to Hadoop, Databricks, h2o, and Neo4j
 
 ***
 
@@ -251,7 +264,7 @@ Exposure to Hadoop, Databricks, h2o, and TensorFlow
 
 **Master's in Statistics**  
 2019 to 2021  
-3.93 GPA  
+3.95 GPA  
 
 **Bachelor's in Statistics (emphasis in Actuarial Science)**  
 2016 to 2021  
@@ -279,6 +292,7 @@ Exposure to Hadoop, Databricks, h2o, and TensorFlow
 #####  Other
 <ul style="margin-top: -10px">
 <li>Fluent in Spanish</li>
+<li>Graduated Magna Cum Laude</li>
 <li>Statistics Department Dean's List, 2016 to 2021</li>
 <li>Eagle Scout</li>
 </ul> 
